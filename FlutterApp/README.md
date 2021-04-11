@@ -1,4 +1,4 @@
-# login_register
+# Register & Login App
 
 A new Flutter project.
 
