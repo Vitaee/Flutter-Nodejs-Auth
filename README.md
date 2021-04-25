@@ -1,2 +1,2 @@
 # Flutter Nodejs Auth
-Flutter - Nodejs &amp; MySQL User Authentication
+Flutter - Nodejs &amp; MongoDB User Authentication
