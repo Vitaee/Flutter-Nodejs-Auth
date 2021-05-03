@@ -7,6 +7,8 @@ import 'package:login_register/Screens/register/register.dart';
 import 'package:http/http.dart' as http;
 import 'package:login_register/Screens/home/home.dart';
 import 'package:login_register/Models/UserData.dart';
+import 'package:login_register/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -19,24 +21,27 @@ class LoginScreen extends State<LoginPage> {
   var jsonResponse;
   bool isLoading = false;
   signIn(String email, String pass) async {
-    String url = "http://10.0.2.2:3000/auth";
-    Map body = {"username": email, "password": pass};
+    String url = "http://10.0.2.2:3000/user/login";
+    Map body = {"email": email, "password": pass};
 
     var res = await http.Client().post(Uri.parse(url), body: body);
     if (res.statusCode == 200) {
-      jsonResponse = UserData.fromJson(jsonDecode(res.body));
       print("Response status: ${res.statusCode}");
+      var jsonResponse = res.body;
+      print(jsonResponse);
       if (jsonResponse != null) {
         setState(() {
           isLoading = false;
-          global_email = jsonResponse.email;
-          global_username = jsonResponse.username;
-          global_loggedin = jsonResponse.loggedin;
         });
       }
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('jwt', jsonResponse);
+
       // login giriş başarılı!
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  HomeScreen.fromBase64(jsonResponse)),
           (Route<dynamic> route) => false);
     } else {
       setState(() {

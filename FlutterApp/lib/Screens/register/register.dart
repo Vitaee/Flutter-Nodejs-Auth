@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:login_register/Components/background.dart';
-import 'package:login_register/Screens/home/home.dart';
 import 'package:login_register/Screens/login/login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -18,7 +17,7 @@ class RegisterScreen extends State<RegisterPage> {
   var jsonResponse;
   bool isLoading = false;
   signUp(String username, String email, String password) async {
-    String url = "http://10.0.2.2:3000/regis";
+    String url = "http://10.0.2.2:3000/user";
     Map body = {"username": username, "email": email, "password": password};
     var res = await http.Client().post(Uri.parse(url), body: body);
     if (res.statusCode == 200) {
@@ -31,7 +30,7 @@ class RegisterScreen extends State<RegisterPage> {
       }
       // kayıt başarılı!
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+          MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
           (Route<dynamic> route) => false);
     } else {
       setState(() {

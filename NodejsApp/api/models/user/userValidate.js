@@ -10,6 +10,15 @@ function validateRegister(user){
     return schema.validate(user);
 }
 
+function validateUserLogin(user){
+    const schema = Joi.object({
+        email: Joi.string().trim().email().min(3).required(),
+        password: Joi.string().min(6).max(20).required(),
+    });
+    return schema.validate(user);
+}
+
 module.exports = {
     register:validateRegister,
+    login: validateUserLogin,
 }
