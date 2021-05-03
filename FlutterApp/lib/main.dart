@@ -31,32 +31,34 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         //home: LoginPage());
-        home: FutureBuilder(
-            future: jwtOrEmpty,
-            builder: (context, snapshot) {
-              print(snapshot);
-              if (!snapshot.hasData) return LoginPage();
-              if (snapshot.data != "") {
-                var str = snapshot.data;
-                var jwt = str.split(".");
-                if (jwt.length != 3) {
-                  print("dsfasdfaisdşfl");
-                  return LoginPage();
-                } else {
-                  var payload = json.decode(
-                      ascii.decode(base64.decode(base64.normalize(jwt[1]))));
-                  if (DateTime.fromMillisecondsSinceEpoch(payload["exp"] * 1000)
-                      .isAfter(DateTime.now())) {
-                    return Scaffold(
-                        backgroundColor: Colors.cyan,
-                        body: HomeScreen(str, payload));
-                  } else {
+        home: Scaffold(
+          backgroundColor: Color(0xFF4478FA),
+          body: FutureBuilder(
+              future: jwtOrEmpty,
+              builder: (context, snapshot) {
+                print(snapshot);
+                if (!snapshot.hasData) return LoginPage();
+                if (snapshot.data != "") {
+                  var str = snapshot.data;
+                  var jwt = str.split(".");
+                  if (jwt.length != 3) {
+                    print("dsfasdfaisdşfl");
                     return LoginPage();
+                  } else {
+                    var payload = json.decode(
+                        ascii.decode(base64.decode(base64.normalize(jwt[1]))));
+                    if (DateTime.fromMillisecondsSinceEpoch(
+                            payload["exp"] * 1000)
+                        .isAfter(DateTime.now())) {
+                      return HomeScreen(str, payload);
+                    } else {
+                      return LoginPage();
+                    }
                   }
+                } else {
+                  return LoginPage();
                 }
-              } else {
-                return LoginPage();
-              }
-            }));
+              }),
+        ));
   }
 }

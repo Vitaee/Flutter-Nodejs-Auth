@@ -28,6 +28,7 @@ class HomeScreen extends StatelessWidget {
           builder: (context, snapshot) => snapshot.hasData
               ? ListView(
                   children: <Widget>[
+                    Text(snapshot.data), // bu kısım düzeltilecek.
                     Padding(
                       padding: EdgeInsets.only(top: 15.0, left: 10.0),
                       child: Row(
@@ -90,25 +91,25 @@ class HomeScreen extends StatelessWidget {
                                   height: MediaQuery.of(context).size.height -
                                       255.0,
                                   child: ListView(children: [
-                                    _buildFoodItem('assets/falafel.png',
+                                    _buildFoodItem('assets/images/falafel.png',
                                         'Falafel Beet Hummus ', '\$24.00'),
-                                    _buildFoodItem('assets/buddha.png',
+                                    _buildFoodItem('assets/images/buddha.png',
                                         'Buddha bowl', '\$22.00'),
-                                    _buildFoodItem('assets/salad.png',
+                                    _buildFoodItem('assets/images/salad.png',
                                         'Salad with Salmon', '\$22.00'),
-                                    _buildFoodItem('assets/falafel.png',
+                                    _buildFoodItem('assets/images/falafel.png',
                                         'Falafel Beet Hummu', '\$22.00'),
-                                    _buildFoodItem('assets/buddha.png',
+                                    _buildFoodItem('assets/images/buddha.png',
                                         'Buddha bowl', '\$22.00'),
-                                    _buildFoodItem('assets/salad.png',
+                                    _buildFoodItem('assets/images/salad.png',
                                         'Salad with Salmon', '\$22.00'),
-                                    _buildFoodItem('assets/falafel.png',
+                                    _buildFoodItem('assets/images/falafel.png',
                                         'Falafel Beet Hummu', '\$22.00'),
-                                    _buildFoodItem('assets/beetroot.png',
+                                    _buildFoodItem('assets/images/beetroot.png',
                                         'Beetroot Hommus', '\$22.00'),
-                                    _buildFoodItem('assets/salad.png',
+                                    _buildFoodItem('assets/images/salad.png',
                                         'Salad with Salmon', '\$24.00'),
-                                    _buildFoodItem('assets/beetroot.png',
+                                    _buildFoodItem('assets/images/beetroot.png',
                                         'Beetroot Hommus', '\$26.00'),
                                   ]))),
                           BottomNavigationBar(
@@ -135,7 +136,7 @@ class HomeScreen extends StatelessWidget {
                   ],
                 )
               : snapshot.hasError
-                  ? Text("An error occurred")
+                  ? Center(child: Text("An error occurred"))
                   : CircularProgressIndicator()),
     );
   }
