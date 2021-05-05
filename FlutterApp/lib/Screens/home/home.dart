@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:login_register/GlobalValues/globals.dart';
+import 'package:login_register/Screens/Detail/details.dart';
 import 'package:login_register/Screens/login/login.dart';
 import 'dart:convert' show json, base64, ascii;
 import 'package:http/http.dart' as http;
+import 'package:login_register/Screens/menu/draw_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'details.dart';
 
 const SERVER_IP = "http://10.0.2.2:3000";
 
@@ -34,76 +34,32 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          title: Text('Healthy fOOD',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25.0)),
+        ),
+        drawer: SideMenu(),
         backgroundColor: Color(0xFF4478FA),
         body: Container(
           height: double.infinity,
           child: FutureBuilder(
+              key: PageStorageKey("$context"),
               future: http.read(Uri.parse('$SERVER_IP/user/data'),
                   headers: {"authorization": widget.jwt}),
               builder: (context, snapshot) => snapshot.hasData
-                  ? ListView(
+                  ? Column(
                       children: <Widget>[
                         // Text(snapshot.data), // bu kısım düzeltilecek.
-                        Padding(
-                          padding: EdgeInsets.only(top: 15.0, left: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              IconButton(
-                                padding: EdgeInsets.only(right: 10),
-                                icon: Icon(Icons.menu),
-                                color: Colors.white,
-                                onPressed: () {},
-                              ),
-                              Container(
-                                  width: 125.0,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      IconButton(
-                                        icon: Icon(Icons.logout),
-                                        color: Colors.white,
-                                        onPressed: () {
-                                          setState(() {
-                                            logOut();
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      LoginPage()),
-                                            );
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ))
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 25.0),
-                        Padding(
-                          padding: EdgeInsets.only(left: 40.0),
-                          child: Row(
-                            children: <Widget>[
-                              Text('Healthy',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25.0)),
-                              SizedBox(width: 10.0),
-                              Text('Food',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 25.0))
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 5.0),
+
                         Container(
-                          height: MediaQuery.of(context).size.height - 150.0,
+                          height: MediaQuery.of(context).size.height * 0.83,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(75.0)),
+                                topLeft: Radius.circular(1.0)),
                           ),
                           child: ListView(
                             primary: false,
@@ -115,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Container(
                                       height:
                                           MediaQuery.of(context).size.height -
-                                              255.0,
+                                              100.0,
                                       child: ListView(children: [
                                         _buildFoodItem(
                                             context,
@@ -163,27 +119,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                             'Salad with Salmon',
                                             '\$19.00'),
                                       ]))),
-                              BottomNavigationBar(
-                                  items: const <BottomNavigationBarItem>[
-                                    BottomNavigationBarItem(
-                                      icon: Icon(Icons.home),
-                                      label: 'Home',
-                                      backgroundColor: Colors.red,
-                                    ),
-                                    BottomNavigationBarItem(
-                                      icon: Icon(Icons.search),
-                                      label: 'Search',
-                                      backgroundColor: Colors.green,
-                                    ),
-                                    BottomNavigationBarItem(
-                                      icon: Icon(Icons.account_circle),
-                                      label: 'Profile',
-                                      backgroundColor: Colors.purple,
-                                    ),
-                                  ]),
                             ],
                           ),
-                        )
+                        ),
+                        BottomNavigationBar(
+                            items: const <BottomNavigationBarItem>[
+                              BottomNavigationBarItem(
+                                icon: Icon(Icons.home),
+                                label: 'Home',
+                                backgroundColor: Colors.red,
+                              ),
+                              BottomNavigationBarItem(
+                                icon: Icon(Icons.search),
+                                label: 'Search',
+                                backgroundColor: Colors.green,
+                              ),
+                              BottomNavigationBarItem(
+                                icon: Icon(Icons.account_circle),
+                                label: 'Profile',
+                                backgroundColor: Colors.purple,
+                              ),
+                            ]),
                       ],
                     )
                   : snapshot.hasError
@@ -198,11 +154,8 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
         child: InkWell(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          DetailsScreen(imgPath, foodName, price)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => DetailScreen()));
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -211,11 +164,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(children: [
                   Hero(
                       tag: price,
-                      child: Image(
-                          image: AssetImage(imgPath),
-                          fit: BoxFit.cover,
-                          height: 75.0,
-                          width: 75.0)),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image(
+                            image: AssetImage(imgPath),
+                            fit: BoxFit.cover,
+                            height: 75.0,
+                            width: 75.0),
+                      )),
                   SizedBox(width: 10.0),
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
