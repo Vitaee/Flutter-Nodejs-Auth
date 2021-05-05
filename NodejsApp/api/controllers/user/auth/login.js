@@ -6,8 +6,6 @@ require('dotenv').config();
 
 let errorObject = {}
 module.exports = async (req,res) => {
-
-
     const {error} = userValidate.login(req.body);
     if(error){
         if (error.details[0].message.includes("email")) errorObject = {

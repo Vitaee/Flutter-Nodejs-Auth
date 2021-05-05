@@ -29,16 +29,11 @@ class LoginScreen extends State<LoginPage> {
     if (res.statusCode == 200) {
       print("Response status: ${res.statusCode}");
       var jsonResponse = res.body;
-      print(jsonResponse);
-      if (jsonResponse != null) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('jwt', jsonResponse);
 
-      // login giriş başarılı!
+      //login giriş başarılı!
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (BuildContext context) =>
@@ -105,16 +100,9 @@ class LoginScreen extends State<LoginPage> {
               alignment: Alignment.centerRight,
               margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               child: ElevatedButton(
-                onPressed: usernameController.text == "" ||
-                        passwordController.text == ""
-                    ? null
-                    : () {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        signIn(
-                            usernameController.text, passwordController.text);
-                      },
+                onPressed: () {
+                  signIn(usernameController.text, passwordController.text);
+                },
                 child: Container(
                   alignment: Alignment.center,
                   height: 50.0,
