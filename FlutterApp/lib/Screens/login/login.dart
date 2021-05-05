@@ -23,6 +23,7 @@ class LoginScreen extends State<LoginPage> {
   signIn(String email, String pass) async {
     String url = "http://10.0.2.2:3000/user/login";
     Map body = {"email": email, "password": pass};
+    print(body);
 
     var res = await http.Client().post(Uri.parse(url), body: body);
     if (res.statusCode == 200) {
