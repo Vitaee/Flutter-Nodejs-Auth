@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:login_register/Models/UserData.dart';
 
 class DetailScreen extends StatefulWidget {
   DetailScreen({
     Key key,
-    this.brandName,
+    this.foodName,
   }) : super(key: key);
-  var brandName;
+  final String foodName;
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -55,7 +54,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       width: MediaQuery.of(context).size.width)),
             ],
           ),
-          Text(widget.brandName),
+          Text(widget.foodName),
         ],
       ),
     );

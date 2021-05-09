@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:login_register/GlobalValues/globals.dart';
-import 'package:login_register/Models/UserData.dart';
+import 'package:login_register/Models/FoodsModel.dart';
 import 'package:login_register/Screens/Detail/details.dart';
-import 'package:login_register/Screens/detail/details.dart';
-import 'package:login_register/Screens/login/login.dart';
 import 'dart:convert' show json, base64, ascii;
 import 'package:http/http.dart' as http;
 import 'package:login_register/Screens/menu/draw_menu.dart';
@@ -140,7 +136,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => DetailScreen("WonderClientName")));
+                  builder: (context) => DetailScreen(
+                        foodName: foodName,
+                      )));
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

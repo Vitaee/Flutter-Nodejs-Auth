@@ -2,12 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:login_register/Components/background.dart';
-import 'package:login_register/GlobalValues/globals.dart';
 import 'package:login_register/Screens/register/register.dart';
 import 'package:http/http.dart' as http;
 import 'package:login_register/Screens/home/home.dart';
-import 'package:login_register/Models/UserData.dart';
-import 'package:login_register/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
