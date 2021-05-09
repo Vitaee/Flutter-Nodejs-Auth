@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:login_register/GlobalValues/globals.dart';
+import 'package:login_register/Models/UserData.dart';
 import 'package:login_register/Screens/Detail/details.dart';
+import 'package:login_register/Screens/detail/details.dart';
 import 'package:login_register/Screens/login/login.dart';
 import 'dart:convert' show json, base64, ascii;
 import 'package:http/http.dart' as http;
 import 'package:login_register/Screens/menu/draw_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
+import 'dart:convert';
 
 const SERVER_IP = "http://10.0.2.2:3000";
 
@@ -31,6 +35,19 @@ class _HomeScreenState extends State<HomeScreen> {
     prefs.remove('jwt');
   }
 
+  Future<List<Foods>> fetchFood() async {
+    final response = await http.get(
+      Uri.parse('http://10.0.2.2:3000/foods'),
+    );
+    if (response.statusCode == 200) {
+      return (json.decode(response.body) as List)
+          .map((myMap) => Foods.fromJson(myMap))
+          .toList();
+    } else {
+      throw Exception("Failed to load post!");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,104 +64,72 @@ class _HomeScreenState extends State<HomeScreen> {
           height: double.infinity,
           child: FutureBuilder(
               key: PageStorageKey("$context"),
-              future: http.read(Uri.parse('$SERVER_IP/user/data'),
-                  headers: {"authorization": widget.jwt}),
-              builder: (context, snapshot) => snapshot.hasData
-                  ? Column(
-                      children: <Widget>[
-                        // Text(snapshot.data), // bu kısım düzeltilecek.
+              future: fetchFood(),
+              builder: (BuildContext context,
+                      AsyncSnapshot<List<Foods>> snapshot) =>
+                  snapshot.hasData
+                      ? Column(
+                          children: <Widget>[
+                            // Text(snapshot.data), // bu kısım düzeltilecek.
 
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.83,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(1.0)),
-                          ),
-                          child: ListView(
-                            primary: false,
-                            padding: EdgeInsets.only(left: 1.0, right: 1.0),
-                            children: <Widget>[
-                              Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 45.0, left: 25, right: 20),
-                                  child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.height -
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.83,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(1.0)),
+                              ),
+                              child: ListView(
+                                primary: false,
+                                padding: EdgeInsets.only(left: 1.0, right: 1.0),
+                                children: <Widget>[
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 45.0, left: 25, right: 20),
+                                      child: Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height -
                                               100.0,
-                                      child: ListView(children: [
-                                        _buildFoodItem(
-                                            context,
-                                            'assets/images/falafel.png',
-                                            'Falafel Beet Hummus ',
-                                            '\$27.00'),
-                                        _buildFoodItem(
-                                            context,
-                                            'assets/images/buddha.png',
-                                            'Buddha bowl',
-                                            '\$26.00'),
-                                        _buildFoodItem(
-                                            context,
-                                            'assets/images/salad.png',
-                                            'Salad with Salmon',
-                                            '\$25.00'),
-                                        _buildFoodItem(
-                                            context,
-                                            'assets/images/falafel.png',
-                                            'Falafel Beet Hummu',
-                                            '\$24.00'),
-                                        _buildFoodItem(
-                                            context,
-                                            'assets/images/buddha.png',
-                                            'Buddha bowl',
-                                            '\$23.00'),
-                                        _buildFoodItem(
-                                            context,
-                                            'assets/images/salad.png',
-                                            'Salad with Salmon',
-                                            '\$22.00'),
-                                        _buildFoodItem(
-                                            context,
-                                            'assets/images/falafel.png',
-                                            'Falafel Beet Hummu',
-                                            '\$21.00'),
-                                        _buildFoodItem(
-                                            context,
-                                            'assets/images/beetroot.png',
-                                            'Beetroot Hommus',
-                                            '\$20.00'),
-                                        _buildFoodItem(
-                                            context,
-                                            'assets/images/salad.png',
-                                            'Salad with Salmon',
-                                            '\$19.00'),
-                                      ]))),
-                            ],
-                          ),
-                        ),
-                        BottomNavigationBar(
-                            items: const <BottomNavigationBarItem>[
-                              BottomNavigationBarItem(
-                                icon: Icon(Icons.home),
-                                label: 'Home',
-                                backgroundColor: Colors.red,
+                                          child: ListView.builder(
+                                              itemCount: snapshot.data.length,
+                                              itemBuilder: (context, index) {
+                                                print(snapshot
+                                                    .data[index].sharedBy);
+                                                return _buildFoodItem(
+                                                    context,
+                                                    snapshot.data[index].image,
+                                                    snapshot
+                                                        .data[index].foodName,
+                                                    snapshot
+                                                        .data[index].sharedBy);
+                                              }))),
+                                ],
                               ),
-                              BottomNavigationBarItem(
-                                icon: Icon(Icons.search),
-                                label: 'Search',
-                                backgroundColor: Colors.green,
-                              ),
-                              BottomNavigationBarItem(
-                                icon: Icon(Icons.account_circle),
-                                label: 'Profile',
-                                backgroundColor: Colors.purple,
-                              ),
-                            ]),
-                      ],
-                    )
-                  : snapshot.hasError
-                      ? Center(child: Text("An error occurred"))
-                      : CircularProgressIndicator()),
+                            ),
+                            BottomNavigationBar(
+                                items: const <BottomNavigationBarItem>[
+                                  BottomNavigationBarItem(
+                                    icon: Icon(Icons.home),
+                                    label: 'Home',
+                                    backgroundColor: Colors.red,
+                                  ),
+                                  BottomNavigationBarItem(
+                                    icon: Icon(Icons.search),
+                                    label: 'Search',
+                                    backgroundColor: Colors.green,
+                                  ),
+                                  BottomNavigationBarItem(
+                                    icon: Icon(Icons.account_circle),
+                                    label: 'Profile',
+                                    backgroundColor: Colors.purple,
+                                  ),
+                                ]),
+                          ],
+                        )
+                      : snapshot.hasError
+                          ? Center(child: Text("An error occurred"))
+                          : CircularProgressIndicator()),
         ));
   }
 
@@ -154,8 +139,8 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
         child: InkWell(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => DetailScreen()));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => DetailScreen("WonderClientName")));
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -166,11 +151,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       tag: price,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
-                        child: Image(
-                            image: AssetImage(imgPath),
-                            fit: BoxFit.cover,
-                            height: 75.0,
-                            width: 75.0),
+                        child: Image.network(imgPath,
+                            fit: BoxFit.cover, height: 75.0, width: 75.0),
                       )),
                   SizedBox(width: 10.0),
                   Column(
@@ -178,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(foodName,
                             style: TextStyle(
-                                fontSize: 17.0, fontWeight: FontWeight.bold)),
+                                fontSize: 13.0, fontWeight: FontWeight.bold)),
                         Text(price,
                             style:
                                 TextStyle(fontSize: 15.0, color: Colors.grey))
