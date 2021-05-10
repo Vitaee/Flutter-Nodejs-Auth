@@ -14,7 +14,7 @@ module.exports = async (req,res) => {
       return res.status(500).json(errorJson(e, 'An interval server error occurred while getting your information, please try again.'))
     });
 
-    res.status(200).send(user);
+    res.status(200).send([{email:user.email, username:user.username}]);
 
     //res.send("Very Secret Data Oldu");
   } catch (err) {

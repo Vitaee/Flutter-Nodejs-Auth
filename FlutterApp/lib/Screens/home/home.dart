@@ -90,8 +90,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           child: ListView.builder(
                                               itemCount: snapshot.data.length,
                                               itemBuilder: (context, index) {
-                                                print(snapshot
-                                                    .data[index].sharedBy);
                                                 return _buildFoodItem(
                                                     context,
                                                     snapshot.data[index].image,
