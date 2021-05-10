@@ -48,63 +48,53 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Healthy fOOD',
+        title: Text('Healthy Food',
             style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 25.0)),
+                fontSize: 22.0)),
       ),
       drawer: SideMenu(),
       backgroundColor: Color(0xFF4478FA),
-      body: Container(
-        height: double.infinity,
-        child: FutureBuilder(
-            key: PageStorageKey("$context"),
-            future: fetchFood(),
-            builder: (BuildContext context,
-                    AsyncSnapshot<List<Foods>> snapshot) =>
-                snapshot.hasData
-                    ? Column(
+      body: FutureBuilder(
+          key: PageStorageKey("$context"),
+          future: fetchFood(),
+          builder: (BuildContext context,
+                  AsyncSnapshot<List<Foods>> snapshot) =>
+              snapshot.hasData
+                  ? Container(
+                      height: MediaQuery.of(context).size.height * 0.83,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.only(topLeft: Radius.circular(1.0)),
+                      ),
+                      child: ListView(
+                        primary: false,
+                        padding: EdgeInsets.only(left: 1.0, right: 1.0),
                         children: <Widget>[
-                          // Text(snapshot.data), // bu kısım düzeltilecek.
-
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.833,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(1.0)),
-                            ),
-                            child: ListView(
-                              primary: false,
-                              padding: EdgeInsets.only(left: 1.0, right: 1.0),
-                              children: <Widget>[
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 45.0, left: 25, right: 20),
-                                    child: Container(
-                                        height:
-                                            MediaQuery.of(context).size.height -
-                                                100.0,
-                                        child: ListView.builder(
-                                            itemCount: snapshot.data.length,
-                                            itemBuilder: (context, index) {
-                                              return _buildFoodItem(
-                                                  context,
-                                                  snapshot.data[index].image,
-                                                  snapshot.data[index].foodName,
-                                                  snapshot
-                                                      .data[index].sharedBy);
-                                            }))),
-                              ],
-                            ),
-                          ),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  top: 45.0, left: 25, right: 20),
+                              child: Container(
+                                  height: MediaQuery.of(context).size.height -
+                                      100.0,
+                                  child: ListView.builder(
+                                      itemCount: snapshot.data.length,
+                                      itemBuilder: (context, index) {
+                                        return _buildFoodItem(
+                                            context,
+                                            snapshot.data[index].image,
+                                            snapshot.data[index].foodName,
+                                            snapshot.data[index].sharedBy,
+                                            index);
+                                      }))),
                         ],
-                      )
-                    : snapshot.hasError
-                        ? Center(child: Text("An error occurred"))
-                        : CircularProgressIndicator()),
-      ),
+                      ),
+                    )
+                  : snapshot.hasError
+                      ? Center(child: Text("An error occurred"))
+                      : CircularProgressIndicator()),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -127,8 +117,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFoodItem(
-      BuildContext context, String imgPath, String foodName, String price) {
+  Widget _buildFoodItem(BuildContext context, String imgPath, String foodName,
+      String price, int index) {
     return Padding(
         padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
         child: InkWell(
@@ -144,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Container(
                     child: Row(children: [
                   Hero(
-                      tag: price,
+                      tag: index,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
                         child: Image.network(imgPath,

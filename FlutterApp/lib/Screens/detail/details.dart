@@ -52,9 +52,9 @@ class _DetailScreenState extends State<DetailScreen> {
                           color: Colors.white),
                       height: MediaQuery.of(context).size.height - 100.0,
                       width: MediaQuery.of(context).size.width)),
+              Text(widget.foodName),
             ],
           ),
-          Text(widget.foodName),
         ],
       ),
     );
