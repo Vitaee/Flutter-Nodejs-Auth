@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:login_register/Models/FoodsModel.dart';
-import 'package:login_register/Screens/Detail/details.dart';
 import 'dart:convert' show json, base64, ascii;
 import 'package:http/http.dart' as http;
+import 'package:login_register/Screens/detail/details.dart';
 import 'package:login_register/Screens/menu/draw_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
@@ -48,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFF4478FA),
         title: Text('Healthy Food',
             style: TextStyle(
                 color: Colors.white,
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: 22.0)),
       ),
       drawer: SideMenu(),
-      backgroundColor: Color(0xFF4478FA),
+      backgroundColor: Colors.white,
       body: FutureBuilder(
           key: PageStorageKey("$context"),
           future: fetchFood(),
@@ -83,11 +84,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       itemCount: snapshot.data.length,
                                       itemBuilder: (context, index) {
                                         return _buildFoodItem(
-                                            context,
-                                            snapshot.data[index].image,
-                                            snapshot.data[index].foodName,
-                                            snapshot.data[index].sharedBy,
-                                            index);
+                                          context,
+                                          snapshot.data[index].image,
+                                          snapshot.data[index].foodName,
+                                          snapshot.data[index].sharedBy,
+                                          snapshot.data[index].directions,
+                                          snapshot.data[index].ingredients,
+                                          index,
+                                        );
                                       }))),
                         ],
                       ),
@@ -118,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFoodItem(BuildContext context, String imgPath, String foodName,
-      String price, int index) {
+      String sharedBy, List description, List details, int index) {
     return Padding(
         padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
         child: InkWell(
@@ -126,6 +130,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => DetailScreen(
                         foodName: foodName,
+                        sharedBy: sharedBy,
+                        description: description,
+                        details: details,
+                        image: imgPath,
                       )));
             },
             child: Row(
@@ -147,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text(foodName,
                             style: TextStyle(
                                 fontSize: 13.0, fontWeight: FontWeight.bold)),
-                        Text(price,
+                        Text(sharedBy,
                             style:
                                 TextStyle(fontSize: 15.0, color: Colors.grey))
                       ])
