@@ -15,8 +15,7 @@ module.exports = async (req,res) => {
     });
 
     res.status(200).send([{email:user.email, username:user.username}]);
-
-    //res.send("Very Secret Data Oldu");
+    
   } catch (err) {
     res.status(401);
     res.send("Bad Token");

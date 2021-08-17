@@ -1,33 +1,16 @@
-const mongoose = require('mongoose');
+const {Food} = require('../../models/food');
+const errorJson = require('../../../utils/error');
 require('dotenv').config();
-const MongoClient = require('mongodb').MongoClient;
 
 module.exports = async (req,res) => {
   try {
-      const dburl = 'mongodb://localhost:27017';
-      const dbname = 'node-flutter';
-      const collname = 'healthyFoods';
+    let foods = await Food.find().sort({length: -1}).limit(10).catch( (e) => {
+        return res.status(500).errorJson(errorJson(e, 'An interval server error occurred while getting foods from db.'))
+    });
 
-      MongoClient.connect(dburl, function (err, client) {
-          if (!err) {
+    res.status(200).send( {data: foods } )
 
-              // Get db
-              const db = client.db(dbname);
-
-              // Get collection
-              const collection = db.collection(collname);
-
-              // Find all documents in the collection
-              collection.find({}).toArray(function (err, todos) {
-                  res.status(200).send(todos);
-              })
-          }
-          else res.send(err);
-
-      });
   } catch (err) {
-      console.log(err)
-    res.status(401);
-    res.send("Bad Token");
+    return res.status(500).errorJson(errorJson(err, 'An interval server error occurred'))
   }
 }
