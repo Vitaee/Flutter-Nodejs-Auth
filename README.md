@@ -1,9 +1,11 @@
 # Flutter Nodejs Auth
 Flutter - Nodejs &amp; MongoDB User Authentication
 
-# HomePage
+# Used Techh.
 
-<img src="https://i.resmim.net/i/Screenshot_1620073633.png" height="500" width="250"/>
+- Flutter Dart Framework for mobile application.
+- Nodejs for rest api.
+- MongoDB as a database.
 
 
 ### Contributors
