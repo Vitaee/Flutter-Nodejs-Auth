@@ -30,6 +30,8 @@
     "rate-limiter-flexible": "^2.2.1"
   },
   "devDependencies": {
+    "axios": "^0.24.0",
+    "cheerio": "^1.0.0-rc.10",
     "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1"
   }
