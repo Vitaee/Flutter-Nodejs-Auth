@@ -49,7 +49,43 @@ module.exports = async (req, res) => {
         
         let author_name = "By " + $('.author-link > a').text()
 
-        console.log(author_name)
+        let prep_time = $('.icon-with-text__children').eq(0).find('.list').eq(0).find('li').eq(0).text()
+
+        let cook_time = $('.icon-with-text__children').eq(0).find('.list').eq(0).find('li').eq(1).text()
+
+        let made_level = $('.icon-with-text__children').eq(1).text()
+
+        let servers = $('.icon-with-text__children').eq(2).text()
+
+        let short_info = $('.editor-content').eq(0).text()
+        
+        let nutrition_1 = $('.key-value-blocks__batch.body-copy-extra-small').eq(0).find('tr');
+
+        let nutrition_2 = $('.key-value-blocks__batch.body-copy-extra-small').eq(1).find('tr');
+
+        let nutritions = {}
+
+        for (let i = 0; i < nutrition_1.length; i++) {
+            nutritions[nutrition_1.eq(i).find('td').eq(1).text()] = nutrition_1.find('td').eq(2).text();
+            
+        }
+
+        for (let j = 0; j < nutrition_2.length; j++) {
+            nutritions[nutrition_2.eq(j).find('td').eq(1).text()] = nutrition_2.find('td').eq(2).text();
+            
+        }
+
+        let ingredients_element = $('.recipe__ingredients > section').find('ul > li')
+
+        let ingredients = {}
+
+        for (let index = 0; index < ingredients_element.length; index++) {
+           ingredients[index] = ingredients_element.eq(index).text();
+            
+        }
+
+        console.log(ingredients)
+       
 
 
         break;
