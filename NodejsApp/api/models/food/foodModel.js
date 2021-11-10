@@ -2,27 +2,39 @@ const moongoose = require('mongoose');
 
 
 const foodSchema = moongoose.Schema({
-    sharedBy: {
-        type: String
-    },
-    foodName: {
-        type: String
-    },
     sourceLink: {
         type: String
     },
-    servings: {
+    imageSource: {
+        type: String
+    },
+    foodTitle: {
+        type: String
+    },
+    MadeBy: {
         type: String
     },
     prepTime: {
         type: String
     },
-    ingredients: [String],
-    
-    directions: [String],
-    image: {
+    cookTime: {
         type: String
     },
+    madeLevel: {
+        type: String
+    },
+    servers: {
+        type: String
+    },
+    shortInfo: {
+        type: String
+    },
+    
+    nutritions: [String],
+
+    ingredients: [String],
+    
+    methods: [String],
 
 }, {timestamps:true});
 

@@ -3,7 +3,12 @@ const errorJson = require('../../../utils/error');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-
+/** 
+ * Scrape food source links from home page end return them in the list.
+ * 
+ * @param {int} startPage - the start page number
+ * @param {int} endPage - the last page number
+*/
 const scrapePages = async (startPage = 1 , endPage = 2) => {
 
     var sourceLinks = [];
@@ -33,9 +38,12 @@ const scrapePages = async (startPage = 1 , endPage = 2) => {
 
 };
 
-module.exports = async (req, res) => {
-
-    let sourceLinks = await scrapePages(1,1);
+/**
+ * Scrape food details from source link and append to dict. 
+ * 
+ * @param {Array} sourceLinks - Contains source links
+ */
+const scrapeDetails = async (sourceLinks) => {
 
     var loop_datas = { "datas" : [] }
 
@@ -65,17 +73,16 @@ module.exports = async (req, res) => {
 
         let nutrition_2 = $('.key-value-blocks__batch.body-copy-extra-small').eq(1).find('tr');
 
-        let nutritions = {}
+        let nutritions = []
 
         for (let i = 0; i < nutrition_1.length; i++) {
-            nutritions[nutrition_1.eq(i).find('td').eq(1).text()] = nutrition_1.find('td').eq(2).text();
-            
+            let info_1 = nutrition_1.eq(i).find('td').eq(1).text() + " " + nutrition_1.find('td').eq(2).text();
+            let info_2 = nutrition_2.eq(i).find('td').eq(1).text() + " " + nutrition_2.find('td').eq(2).text();
+
+            nutritions.push(info_1)
+            nutritions.push(info_2)
         }
 
-        for (let j = 0; j < nutrition_2.length; j++) {
-            nutritions[nutrition_2.eq(j).find('td').eq(1).text()] = nutrition_2.find('td').eq(2).text();
-            
-        }
 
         let ingredients_element = $('.recipe__ingredients > section').find('ul > li')
 
@@ -105,21 +112,28 @@ module.exports = async (req, res) => {
             "made_level": made_level,
             "servers":servers,
             "short_info":short_info,
-            "nutritions":[ nutritions ], // dart kısmında modellenmesi lazım.
+            "nutritions": nutritions,
             "ingredients":ingredients,
             "methods":methods
         }
 
         loop_datas['datas'].push( js_data )
-
-        break;
-        
+    
     }
 
+    return loop_datas["datas"];
 
+}
 
+module.exports = async (req, res) => {
 
+    let sourceLinks = await scrapePages(1,1);
 
-    return res.status(200).send( {"data": loop_datas['datas']} )
+    let foodDetails = await scrapeDetails(sourceLinks);
+
+    const result = await Food.collection.insertMany(foodDetails, { ordered:true } )
+
+    return res.status(200).send( {'msg': result.insertedCount + " documents were inserted."} )
+
 };
 
