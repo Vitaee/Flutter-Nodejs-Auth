@@ -37,6 +37,8 @@ module.exports = async (req, res) => {
 
     let sourceLinks = await scrapePages(1,1);
 
+    var loop_datas = { "datas" : [] }
+
     for (let index = 0; index < sourceLinks.length; index++) {
 
         let html = await axios.get( sourceLinks[index] );
@@ -77,20 +79,47 @@ module.exports = async (req, res) => {
 
         let ingredients_element = $('.recipe__ingredients > section').find('ul > li')
 
-        let ingredients = {}
+        let ingredients = []
 
         for (let index = 0; index < ingredients_element.length; index++) {
-           ingredients[index] = ingredients_element.eq(index).text();
+           ingredients.push( ingredients_element.eq(index).text() )
             
         }
 
-        console.log(ingredients)
-       
+        let to_method = $('.grouped-list__list.list').find('li')
+        
+        let methods = []
 
+        for (let index = 0; index < to_method.length; index++) {
+            methods.push( to_method.eq(index).find('.editor-content').text() )
+            
+        }
+
+        js_data = {
+            "source_link": sourceLinks[index],
+            "image_source": img_source,
+            "food_title": food_title,
+            "made_by": author_name,
+            "prep_time" : prep_time,
+            "cook_time":cook_time,
+            "made_level": made_level,
+            "servers":servers,
+            "short_info":short_info,
+            "nutritions":[ nutritions ], // dart kısmında modellenmesi lazım.
+            "ingredients":ingredients,
+            "methods":methods
+        }
+
+        loop_datas['datas'].push( js_data )
 
         break;
+        
     }
 
-    return res.status(200).send( {"msg":"ok"} )
+
+
+
+
+    return res.status(200).send( {"data": loop_datas['datas']} )
 };
 
