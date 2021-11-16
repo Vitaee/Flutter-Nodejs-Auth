@@ -13,7 +13,7 @@ module.exports = async (req,res) => {
             return res.status(500).errorJson(errorJson(e, 'An interval server error occurred while getting foods from db.'))
         });
 
-        res.status(200).send( {data: foods } )
+        res.status(200).send( foods  )
 
   } catch (err) {
     return res.status(500).errorJson(errorJson(err, 'An interval server error occurred'))

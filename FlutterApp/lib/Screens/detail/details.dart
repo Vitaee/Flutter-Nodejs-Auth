@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class DetailScreen extends StatefulWidget {
   DetailScreen({
@@ -35,7 +36,8 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          brightness: Brightness.light,
+          systemOverlayStyle:
+              SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
           actions: <Widget>[
             IconButton(
                 icon: Icon(
@@ -157,13 +159,6 @@ class FoodTitleWidget extends StatelessWidget {
         ),
         Row(
           children: <Widget>[
-            Text(
-              "by ",
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFFa9a9a9),
-                  fontWeight: FontWeight.w400),
-            ),
             Text(
               productHost,
               style: TextStyle(

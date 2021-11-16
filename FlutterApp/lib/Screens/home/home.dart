@@ -85,10 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       itemBuilder: (context, index) {
                                         return _buildFoodItem(
                                           context,
-                                          snapshot.data[index].image,
-                                          snapshot.data[index].foodName,
-                                          snapshot.data[index].sharedBy,
-                                          snapshot.data[index].directions,
+                                          snapshot.data[index].imageSource,
+                                          snapshot.data[index].foodTitle,
+                                          snapshot.data[index].madeBy,
+                                          snapshot.data[index].methods,
                                           snapshot.data[index].ingredients,
                                           index,
                                         );
@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     )
                   : snapshot.hasError
-                      ? Center(child: Text("An error occurred"))
+                      ? Center(child: Text("An error accured."))
                       : CircularProgressIndicator()),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -152,7 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(foodName,
+                        Text(
+                            "${foodName.length > 35 ? foodName.substring(0, 35) : foodName}",
                             style: TextStyle(
                                 fontSize: 13.0, fontWeight: FontWeight.bold)),
                         Text(sharedBy,

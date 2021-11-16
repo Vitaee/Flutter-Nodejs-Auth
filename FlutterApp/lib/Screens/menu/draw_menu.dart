@@ -59,7 +59,7 @@ class _SideMenuState extends State<SideMenu> {
                               image: new DecorationImage(
                                 fit: BoxFit.fill,
                                 image: new NetworkImage(
-                                    "https://media-exp1.licdn.com/dms/image/C4D03AQE0Tn3UciIOUQ/profile-displayphoto-shrink_200_200/0/1617999936061?e=1623888000&v=beta&t=11NikCkvRx2eildN433FqVhvjEmzwFmu0S5dIlr3gO4"),
+                                    "https://www.freeiconspng.com/uploads/profile-icon-9.png"),
                               ),
                             ),
                           ),

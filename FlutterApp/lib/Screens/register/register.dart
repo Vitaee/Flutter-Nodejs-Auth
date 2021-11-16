@@ -98,7 +98,7 @@ class RegisterScreen extends State<RegisterPage> {
             Container(
               alignment: Alignment.centerRight,
               margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-              child: RaisedButton(
+              child: ElevatedButton(
                 onPressed: usernameController.text == "" ||
                         passwordController.text == ""
                     ? null
@@ -109,10 +109,15 @@ class RegisterScreen extends State<RegisterPage> {
                         signUp(usernameController.text, emailController.text,
                             passwordController.text);
                       },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80.0)),
-                textColor: Colors.white,
-                padding: const EdgeInsets.all(0),
+
+                //shape: RoundedRectangleBorder(
+                //    borderRadius: BorderRadius.circular(80.0)),
+                //textColor: Colors.white,
+                //padding: const EdgeInsets.all(0),
+                style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(80.0)),
+                    padding: const EdgeInsets.all(0)),
                 child: Container(
                   alignment: Alignment.center,
                   height: 50.0,
