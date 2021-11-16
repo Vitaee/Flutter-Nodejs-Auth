@@ -2,31 +2,31 @@ const moongoose = require('mongoose');
 
 
 const foodSchema = moongoose.Schema({
-    sourceLink: {
+    source_link: {
         type: String
     },
-    imageSource: {
+    image_source: {
         type: String
     },
-    foodTitle: {
+    food_title: {
         type: String
     },
-    MadeBy: {
+    made_by: {
         type: String
     },
-    prepTime: {
+    prep_time: {
         type: String
     },
-    cookTime: {
+    cook_time: {
         type: String
     },
-    madeLevel: {
+    made_level: {
         type: String
     },
     servers: {
         type: String
     },
-    shortInfo: {
+    short_info: {
         type: String
     },
     

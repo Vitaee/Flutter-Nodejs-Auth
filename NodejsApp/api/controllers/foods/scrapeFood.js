@@ -126,8 +126,8 @@ const scrapeDetails = async (sourceLinks) => {
 }
 
 module.exports = async (req, res) => {
-
-    let sourceLinks = await scrapePages(1,1);
+    let sourceLinks;
+    req.params.startPage ? sourceLinks = await scrapePages(req.params.startPage, req.params.endPage) : sourceLinks = await scrapePages(1,1);
 
     let foodDetails = await scrapeDetails(sourceLinks);
 
