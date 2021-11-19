@@ -3,17 +3,17 @@ import 'package:flutter/services.dart';
 
 class DetailScreen extends StatefulWidget {
   DetailScreen({
-    Key key,
-    this.foodName,
-    this.sharedBy,
-    this.image,
-    this.description,
-    this.details,
+    Key? key,
+    required this.foodName,
+    required this.sharedBy,
+    required this.image,
+    required this.description,
+    required this.details,
   }) : super(key: key);
   final String foodName;
   final String sharedBy;
   final String image;
-  final List description, details;
+  final dynamic description, details;
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -125,10 +125,10 @@ class FoodTitleWidget extends StatelessWidget {
   String productHost;
 
   FoodTitleWidget({
-    Key key,
-    @required this.productName,
-    @required this.productPrice,
-    @required this.productHost,
+    Key? key,
+    required this.productName,
+    required this.productPrice,
+    required this.productHost,
   }) : super(key: key);
 
   @override

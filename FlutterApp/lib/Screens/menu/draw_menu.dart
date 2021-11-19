@@ -22,14 +22,15 @@ class _SideMenuState extends State<SideMenu> {
 
   Future<List<UserData>> fetchUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString("jwt");
+    dynamic token = prefs.getString("jwt");
 
     final response = await http.get(Uri.parse('$SERVER_IP/user/data'),
         headers: {'authorization': token});
 
     if (response.statusCode != 200) {
-      print("object");
-      return null;
+      List jsonResponse = json.decode(response.body);
+
+      return jsonResponse.map((myMap) => UserData.fromJson(myMap)).toList();
     }
 
     print("aaişdliaşd");
@@ -51,8 +52,8 @@ class _SideMenuState extends State<SideMenu> {
                   ? Column(
                       children: <Widget>[
                         UserAccountsDrawerHeader(
-                          accountName: Text("${snapshot.data[0].username}"),
-                          accountEmail: Text("${snapshot.data[0].email}"),
+                          accountName: Text("${snapshot.data?[0].username}"),
+                          accountEmail: Text("${snapshot.data?[0].email}"),
                           currentAccountPicture: new Container(
                             decoration: new BoxDecoration(
                               shape: BoxShape.circle,

@@ -14,9 +14,9 @@ class MyApp extends StatelessWidget {
   Future<String> get jwtOrEmpty async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var jwt = prefs.getString("jwt");
-    if (jwt == null) return "";
+    if (jwt == null) return "N";
     print(jwt);
-    return jwt;
+    return jwt.toString();
   }
 
   // This widget is the root of your application.
@@ -37,8 +37,8 @@ class MyApp extends StatelessWidget {
             print(snapshot);
             if (!snapshot.hasData) return LoginPage();
             if (snapshot.data != "") {
-              var str = snapshot.data;
-              var jwt = str.split(".");
+              dynamic str = snapshot.data;
+              dynamic jwt = str.length > 1 ? str.toString().split(".") : "";
               if (jwt.length != 3) {
                 print("dsfasdfaisdşfl");
                 return LoginPage();

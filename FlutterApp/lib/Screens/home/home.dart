@@ -81,15 +81,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   height: MediaQuery.of(context).size.height -
                                       100.0,
                                   child: ListView.builder(
-                                      itemCount: snapshot.data.length,
+                                      itemCount: snapshot.data?.length,
                                       itemBuilder: (context, index) {
                                         return _buildFoodItem(
                                           context,
-                                          snapshot.data[index].imageSource,
-                                          snapshot.data[index].foodTitle,
-                                          snapshot.data[index].madeBy,
-                                          snapshot.data[index].methods,
-                                          snapshot.data[index].ingredients,
+                                          snapshot.data?[index].imageSource,
+                                          snapshot.data?[index].foodTitle,
+                                          snapshot.data?[index].madeBy,
+                                          snapshot.data?[index].methods,
+                                          snapshot.data?[index].ingredients,
                                           index,
                                         );
                                       }))),
@@ -121,19 +121,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFoodItem(BuildContext context, String imgPath, String foodName,
-      String sharedBy, List description, List details, int index) {
+  Widget _buildFoodItem(BuildContext context, String? imgPath, String? foodName,
+      String? sharedBy, List? description, List? details, int? index) {
     return Padding(
         padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
         child: InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => DetailScreen(
-                        foodName: foodName,
-                        sharedBy: sharedBy,
+                        foodName: foodName.toString(),
+                        sharedBy: sharedBy.toString(),
                         description: description,
                         details: details,
-                        image: imgPath,
+                        image: imgPath.toString(),
                       )));
             },
             child: Row(
@@ -142,10 +142,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 Container(
                     child: Row(children: [
                   Hero(
-                      tag: index,
+                      tag: int.parse(index.toString()),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
-                        child: Image.network(imgPath,
+                        child: Image.network(imgPath.toString(),
                             fit: BoxFit.cover, height: 75.0, width: 75.0),
                       )),
                   SizedBox(width: 10.0),
@@ -153,10 +153,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                            "${foodName.length > 35 ? foodName.substring(0, 35) : foodName}",
+                            "${foodName.toString().length > 35 ? foodName.toString().substring(0, 35) : foodName}",
                             style: TextStyle(
                                 fontSize: 13.0, fontWeight: FontWeight.bold)),
-                        Text(sharedBy,
+                        Text(sharedBy.toString(),
                             style:
                                 TextStyle(fontSize: 15.0, color: Colors.grey))
                       ])

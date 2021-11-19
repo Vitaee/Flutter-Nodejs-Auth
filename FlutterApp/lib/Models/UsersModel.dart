@@ -1,6 +1,6 @@
 class UserData {
-  String email;
-  String username;
+  String? email;
+  String? username;
 
   UserData({this.email, this.username});
 

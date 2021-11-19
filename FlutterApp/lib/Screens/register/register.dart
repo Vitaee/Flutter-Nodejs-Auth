@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:login_register/Components/background.dart';
 import 'package:login_register/Screens/login/login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:login_register/Components/popup.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -29,13 +31,33 @@ class RegisterScreen extends State<RegisterPage> {
         });
       }
       // kayıt başarılı!
-      Navigator.of(context).pushAndRemoveUntil(
+
+      /*Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
-          (Route<dynamic> route) => false);
+          (Route<dynamic> route) => false);*/
+
+      showDialog(
+        context: context,
+        builder: (_) => PopUpDialog(
+          title: "Registration Successfull!",
+          content: "Please login with your credentials!",
+          page: LoginPage(),
+        ),
+      );
     } else {
       setState(() {
         isLoading = false;
       });
+
+      showDialog(
+        context: context,
+        builder: (_) => PopUpDialog(
+          title: "Registration Error",
+          content: "Email exist! Please try with different email.",
+          page: RegisterPage(),
+        ),
+        //barrierDismissible: false,
+      );
     }
   }
 
