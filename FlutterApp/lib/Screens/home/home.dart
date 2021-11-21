@@ -72,14 +72,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: ListView(
                         primary: false,
-                        padding: EdgeInsets.only(left: 1.0, right: 1.0),
                         children: <Widget>[
                           Padding(
                               padding: EdgeInsets.only(
-                                  top: 45.0, left: 25, right: 20),
+                                  top: 5.0, left: 18, right: 18),
                               child: Container(
-                                  height: MediaQuery.of(context).size.height -
-                                      100.0,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.8,
                                   child: ListView.builder(
                                       itemCount: snapshot.data?.length,
                                       itemBuilder: (context, index) {
@@ -124,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildFoodItem(BuildContext context, String? imgPath, String? foodName,
       String? sharedBy, List? description, List? details, int? index) {
     return Padding(
-        padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+        padding: EdgeInsets.only(left: 10.0, right: 10.0, top: 18.0),
         child: InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
@@ -136,39 +135,62 @@ class _HomeScreenState extends State<HomeScreen> {
                         image: imgPath.toString(),
                       )));
             },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                    child: Row(children: [
-                  Hero(
-                      tag: int.parse(index.toString()),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image.network(imgPath.toString(),
-                            fit: BoxFit.cover, height: 75.0, width: 75.0),
-                      )),
-                  SizedBox(width: 10.0),
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            "${foodName.toString().length > 35 ? foodName.toString().substring(0, 35) : foodName}",
-                            style: TextStyle(
-                                fontSize: 13.0, fontWeight: FontWeight.bold)),
-                        Text(sharedBy.toString(),
-                            style:
-                                TextStyle(fontSize: 15.0, color: Colors.grey))
-                      ])
-                ])),
-                IconButton(
+            child: Container(
+              decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 3,
+                      blurRadius: 3,
+                      offset: Offset(0, 2), // changes position of shadow
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(25.0),
+                  color: Colors.grey.shade300),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                      child: Row(children: [
+                    Hero(
+                        tag: int.parse(index.toString()),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.network(imgPath.toString(),
+                              fit: BoxFit.cover, height: 75.0, width: 75.0),
+                        )),
+                    SizedBox(width: 10.0),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              "${foodName.toString().length > 35 ? foodName.toString().substring(0, 35) : foodName}",
+                              style: TextStyle(
+                                  fontSize: 13.0, fontWeight: FontWeight.bold)),
+                          Text(sharedBy.toString(),
+                              style:
+                                  TextStyle(fontSize: 14.0, color: Colors.grey))
+                        ])
+                  ])),
+                  IconButton(
                     icon: Icon(
                       Icons.arrow_right_outlined,
                       size: 30,
                     ),
                     color: Colors.black,
-                    onPressed: () {})
-              ],
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => DetailScreen(
+                                foodName: foodName.toString(),
+                                sharedBy: sharedBy.toString(),
+                                description: description,
+                                details: details,
+                                image: imgPath.toString(),
+                              )));
+                    },
+                  )
+                ],
+              ),
             )));
   }
 }
