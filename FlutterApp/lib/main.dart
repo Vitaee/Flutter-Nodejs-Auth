@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:login_register/GlobalValues/globals.dart';
 import 'package:login_register/Screens/home/home.dart';
 import 'Screens/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +14,6 @@ class MyApp extends StatelessWidget {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var jwt = prefs.getString("jwt");
     if (jwt == null) return "N";
-    print(jwt);
     return jwt.toString();
   }
 
@@ -34,13 +32,11 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder(
           future: jwtOrEmpty,
           builder: (context, snapshot) {
-            print(snapshot);
             if (!snapshot.hasData) return LoginPage();
-            if (snapshot.data != "") {
+            if (snapshot.data != "N") {
               dynamic str = snapshot.data;
               dynamic jwt = str.length > 1 ? str.toString().split(".") : "";
               if (jwt.length != 3) {
-                print("dsfasdfaisdşfl");
                 return LoginPage();
               } else {
                 var payload = json.decode(

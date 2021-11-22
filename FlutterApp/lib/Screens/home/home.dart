@@ -31,9 +31,19 @@ class _HomeScreenState extends State<HomeScreen> {
     prefs.remove('jwt');
   }
 
-  Future<List<Foods>> fetchFood() async {
+  bool isLoading = false;
+  int pageCount = 1;
+  ScrollController? _scrollController;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = new ScrollController(initialScrollOffset: 5.0)
+      ..addListener(() => {_scrollListener()});
+  }
+
+  Future<List<Foods>> fetchFood(int pageCount) async {
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:3000/foods'),
+      Uri.parse('http://10.0.2.2:3000/foods?page=$pageCount'),
     );
     if (response.statusCode == 200) {
       return (json.decode(response.body) as List)
@@ -44,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -59,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.white,
       body: FutureBuilder(
           key: PageStorageKey("$context"),
-          future: fetchFood(),
+          future: fetchFood(pageCount),
           builder: (BuildContext context,
                   AsyncSnapshot<List<Foods>> snapshot) =>
               snapshot.hasData
@@ -80,7 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   height:
                                       MediaQuery.of(context).size.height * 0.8,
                                   child: ListView.builder(
-                                      itemCount: snapshot.data?.length,
+                                      itemCount: snapshot.data!.length,
+                                      controller: _scrollController,
                                       itemBuilder: (context, index) {
                                         return _buildFoodItem(
                                           context,
@@ -118,6 +128,30 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  _scrollListener() {
+    if (_scrollController!.offset >=
+            _scrollController!.position.maxScrollExtent &&
+        !_scrollController!.position.outOfRange) {
+      setState(() {
+        print("comes to bottom $isLoading");
+        isLoading = true;
+
+        if (isLoading) {
+          print("Running load more..");
+          pageCount = pageCount + 1;
+
+          fetchFood(pageCount);
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController!.dispose();
+    super.dispose();
   }
 
   Widget _buildFoodItem(BuildContext context, String? imgPath, String? foodName,

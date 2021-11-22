@@ -56,6 +56,7 @@ const scrapeDetails = async (sourceLinks) => {
         let img_source = $('.image__img').eq(2).attr('src')
 
         let food_title = $('.headline.post-header__title > h1').text()
+
         
         let author_name = "By " + $('.author-link > a').text()
 
@@ -117,7 +118,14 @@ const scrapeDetails = async (sourceLinks) => {
             "methods":methods
         }
 
+        const check_title = await Food.find( {'food_title': food_title} );
+        if (check_title.length >= 1) {
+            return loop_datas["datas"]
+        }
+
         loop_datas['datas'].push( js_data )
+
+        
     
     }
 
@@ -127,13 +135,19 @@ const scrapeDetails = async (sourceLinks) => {
 
 module.exports = async (req, res) => {
     let sourceLinks;
-    req.params.startPage ? sourceLinks = await scrapePages(req.params.startPage, req.params.endPage) : sourceLinks = await scrapePages(1,1);
+    req.query.startPage ? sourceLinks = await scrapePages(req.query.startPage, req.query.endPage) : sourceLinks = await scrapePages(1,1);
 
     let foodDetails = await scrapeDetails(sourceLinks);
 
-    const result = await Food.collection.insertMany(foodDetails, { ordered:true } )
+    if (foodDetails.length >= 1){
+        const result = await Food.collection.insertMany(foodDetails, { ordered:true } )
 
-    return res.status(200).send( {'msg': result.insertedCount + " documents were inserted."} )
+        return res.status(200).send( {'msg': result.insertedCount + " documents were inserted."} )
+    }
+
+    return res.status(200).send( {'msg': "Data alraedy exist in db please try again later."} )
+    
+    
 
 };
 
