@@ -50,7 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
           .map((myMap) => Foods.fromJson(myMap))
           .toList();
     } else {
-      throw Exception("Failed to load post!");
+      if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception("Failed to load post!");
+      }
     }
   }
 
@@ -67,47 +71,51 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: SideMenu(),
       backgroundColor: Colors.white,
       body: FutureBuilder(
-          key: PageStorageKey("$context"),
-          future: fetchFood(pageCount),
-          builder: (BuildContext context,
-                  AsyncSnapshot<List<Foods>> snapshot) =>
-              snapshot.hasData
-                  ? Container(
-                      height: MediaQuery.of(context).size.height * 0.83,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            BorderRadius.only(topLeft: Radius.circular(1.0)),
-                      ),
-                      child: ListView(
-                        primary: false,
-                        children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.only(
-                                  top: 5.0, left: 18, right: 18),
-                              child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.8,
-                                  child: ListView.builder(
-                                      itemCount: snapshot.data!.length,
-                                      controller: _scrollController,
-                                      itemBuilder: (context, index) {
-                                        return _buildFoodItem(
-                                          context,
-                                          snapshot.data?[index].imageSource,
-                                          snapshot.data?[index].foodTitle,
-                                          snapshot.data?[index].madeBy,
-                                          snapshot.data?[index].methods,
-                                          snapshot.data?[index].ingredients,
-                                          index,
-                                        );
-                                      }))),
-                        ],
-                      ),
-                    )
-                  : snapshot.hasError
-                      ? Center(child: Text("An error accured."))
-                      : CircularProgressIndicator()),
+        key: PageStorageKey("$context"),
+        future: fetchFood(pageCount),
+        builder: (BuildContext context, AsyncSnapshot<List<Foods>> snapshot) =>
+            snapshot.hasData && snapshot.data!.length >= 1
+                ? Container(
+                    height: MediaQuery.of(context).size.height * 0.83,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          BorderRadius.only(topLeft: Radius.circular(1.0)),
+                    ),
+                    child: ListView(
+                      primary: false,
+                      children: <Widget>[
+                        Padding(
+                            padding:
+                                EdgeInsets.only(top: 5.0, left: 18, right: 18),
+                            child: Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.8,
+                                child: ListView.builder(
+                                    itemCount: snapshot.data!.length,
+                                    controller: _scrollController,
+                                    itemBuilder: (context, index) {
+                                      return _buildFoodItem(
+                                        context,
+                                        snapshot.data?[index].imageSource,
+                                        snapshot.data?[index].foodTitle,
+                                        snapshot.data?[index].madeBy,
+                                        snapshot.data?[index].methods,
+                                        snapshot.data?[index].ingredients,
+                                        index,
+                                      );
+                                    }))),
+                      ],
+                    ),
+                  )
+                : snapshot.hasError
+                    ? Center(child: Text("An error accured."))
+                    : snapshot.data != null
+                        ? Center(
+                            child: Text("There is no foods.."),
+                          )
+                        : CircularProgressIndicator(),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
