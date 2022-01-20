@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:login_register/Components/background.dart';
+import 'package:login_register/Screens/home/home.dart';
 import 'package:login_register/Screens/login/login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:login_register/Components/popup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -23,27 +25,32 @@ class RegisterScreen extends State<RegisterPage> {
     Map body = {"username": username, "email": email, "password": password};
     var res = await http.Client().post(Uri.parse(url), body: body);
     if (res.statusCode == 200) {
-      jsonResponse = json.decode(res.body);
+      //jsonResponse = json.decode(res.body);
+      var jsonResponse = res.body;
       print("Response status: ${res.statusCode}");
-      if (jsonResponse != null) {
+      if (jsonResponse.toString().length <= 5) {
         setState(() {
           isLoading = false;
         });
       }
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('jwt', jsonResponse);
       // kayıt başarılı!
 
-      /*Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
-          (Route<dynamic> route) => false);*/
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  HomeScreen.fromBase64(jsonResponse)),
+          (Route<dynamic> route) => false);
 
-      showDialog(
+      /*showDialog(
         context: context,
         builder: (_) => PopUpDialog(
           title: "Registration Successfull!",
           content: "Please login with your credentials!",
           page: LoginPage(),
         ),
-      );
+      );*/
     } else {
       setState(() {
         isLoading = false;
@@ -53,7 +60,7 @@ class RegisterScreen extends State<RegisterPage> {
         context: context,
         builder: (_) => PopUpDialog(
           title: "Registration Error",
-          content: "Email exist! Please try with different email.",
+          content: "Email / password is wrong!",
           page: RegisterPage(),
         ),
         //barrierDismissible: false,

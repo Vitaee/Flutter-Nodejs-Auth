@@ -48,13 +48,17 @@ module.exports = async (req,res) => {
             .status(500).json(errorJson(err.message,"An interval server error while registering you."))
     });
 
-    return res.status(200).json({
+    const authorization = await jwt.signAccessToken(user._id);
+
+    return res.status(200).send(authorization);
+
+    /*return res.status(200).json({
         resultMessage:{
             msg:"You registered succesfully."
         },
         id:user._id,
         email:user.email,
 
-    });
+    });*/
 
 };

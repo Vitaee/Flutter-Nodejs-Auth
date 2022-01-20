@@ -33,8 +33,6 @@ class _SideMenuState extends State<SideMenu> {
       return jsonResponse.map((myMap) => UserData.fromJson(myMap)).toList();
     }
 
-    print("aaişdliaşd");
-
     List jsonResponse = json.decode(response.body);
 
     return jsonResponse.map((myMap) => UserData.fromJson(myMap)).toList();
