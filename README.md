@@ -7,6 +7,32 @@
   - Customize your profile.
   - Share your own recipe on timeline.
 
+
+# Screenshots of App
+
+### Login and Register Page
+
+<div>
+<img src= "https://serving.photos.photobox.com/50106597e91fc73082a8dce55717206cf5e7ddcba929d7d2405aaaafacedb58ddf677b04.jpg" width=340; height=700; >
+&nbsp;&nbsp;
+<img src= "https://serving.photos.photobox.com/852144434b8957714357c262c2d5bc048e3d93f3125a94b9b71896055850fa46b1719ee9.jpg" width=340; height=700;>
+
+</div>
+
+### Home and Detail Page
+
+<div>
+<img src= "https://serving.photos.photobox.com/680512869bea24ebdf73bb2312aca5f4c1620bb4d6fe835824425f4062b46276ae36a386.jpg" width=340; height=700; >
+&nbsp;&nbsp;
+<img src= "https://serving.photos.photobox.com/76117914ff304ee8c8b3731f7e10a800cc7de106cf1e2fbf3016c139f523b8389f2c9819.jpg" width=340; height=700;>
+
+</div>
+
+
+### Navigation Drawer Menu
+
+<img src="https://serving.photos.photobox.com/31804752e95a1be0adbc920476b05d66a45190f0144e0e0273c4be984a27ee900160c994.jpg" width=340; height=700;>
+
 # Used Technologies
 
 - Flutter Dart Framework for mobile application.
