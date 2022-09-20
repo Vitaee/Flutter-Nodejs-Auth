@@ -2,6 +2,8 @@ const bcrypt = require("bcryptjs");
 const { User, userValidate  } = require("../../../models/user");
 const errorJson = require("../../../../utils/error");
 const generateRandomCode = require("../../../../utils/generate-random-code");
+const jwt = require('../../../../utils/jwtHelper');
+
 let errorObject = {}
 module.exports = async (req,res) => {
     const {error} = userValidate.register(req.body);
@@ -51,14 +53,5 @@ module.exports = async (req,res) => {
     const authorization = await jwt.signAccessToken(user._id);
 
     return res.status(200).send(authorization);
-
-    /*return res.status(200).json({
-        resultMessage:{
-            msg:"You registered succesfully."
-        },
-        id:user._id,
-        email:user.email,
-
-    });*/
 
 };
