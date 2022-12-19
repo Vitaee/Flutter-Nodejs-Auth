@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const db = () => {
-	mongoose.connect(process.env.DB,
+	mongoose.connect(process.env.DOCKER_DB,
 			{
 				useCreateIndex: true,
 				useNewUrlParser: true,

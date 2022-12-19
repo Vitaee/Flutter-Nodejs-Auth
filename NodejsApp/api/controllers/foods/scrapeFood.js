@@ -57,9 +57,9 @@ const scrapeDetails = async (sourceLinks) => {
 
         let food_title = $('.headline.post-header__title > h1').text()
 
-        
-        let author_name = "By " + $('.author-link > a').text()
 
+        let author_name = $('.author-link__list').text()
+        
         let prep_time = $('.icon-with-text__children').eq(0).find('.list').eq(0).find('li').eq(0).text()
 
         let cook_time = $('.icon-with-text__children').eq(0).find('.list').eq(0).find('li').eq(1).text()
