@@ -1,5 +1,5 @@
 require("dotenv").config();
-const S3 = require("aws-sdk/clients/s3");
+const {S3Client, PutObjectCommand} = require("@aws-sdk/client-s3");
 const fs = require("fs");
 
 const bucketName = process.env.AWS_BUCKET_NAME;
@@ -7,33 +7,27 @@ const region = process.env.AWS_BUCKET_REGION;
 const accessKeyId = process.env.AWS_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_SECRET_KEY;
 
-const s3 = new S3({
-  region,
-  accessKeyId,
-  secretAccessKey,
+const s3 = new S3Client({
+  region: "us-east-1",
+  accessKeyId: accessKeyId,
+  secretAccessKey: secretAccessKey
 });
 
 // UPLOAD FILE TO S3
-function uploadFile(file) {
+async function uploadFile(file) {
   const fileStream = fs.createReadStream(file.path);
 
   const uploadParams = {
-    Bucket: bucketName,
+    Bucket: "awsbucketvitae",
     Body: fileStream,
     Key: file.filename,
   };
 
-  return s3.upload(uploadParams).promise();
+
+
+  const data = await s3.send(new PutObjectCommand(uploadParams));
+  return data;
 }
 
-// DOWNLOAD FILE FROM S3
-function getFileStream(fileKey) {
-  const downloadParams = {
-    Key: fileKey,
-    Bucket: bucketName,
-  };
 
-  return s3.getObject(downloadParams).createReadStream();
-}
-
-module.exports = { uploadFile, getFileStream };
+module.exports = { uploadFile };
