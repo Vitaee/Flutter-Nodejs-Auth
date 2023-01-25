@@ -27,20 +27,26 @@ class ScrapFood:
                 source_links.append(source_link)
             except:
                 pass
-
         self.analyse(source_links)
 
     def analyse(self, hrefs: list) -> None:
         for i in range(0, len(hrefs)):
-            req = requests.get(hrefs[i], headers=self.user_agent, timeout=10)
+            req = requests.get("https://www.delish.com/cooking/recipe-ideas/a24228772/cheeseburger-stuffed-peppers-recipe/", headers=self.user_agent, timeout=10)
             soup = BeautifulSoup(req.content, 'html.parser')
 
-
+            print("\n\n\n\n", hrefs[i], "\n\n\n\n\n")
             new_data = soup.find('script', id='json-ld')
             if new_data:
                 json_data = json.loads(new_data.text)
-                parsed_json = self.parse_json_data(json_data)
-                self.save_to_db(parsed_json)
+                parsed_json = None
+                
+                try:
+                    parsed_json = self.parse_json_data(json_data)
+                except:
+                    parsed_json = self.parse_other_json_data(json_data)
+                
+                if not parsed_json: 
+                    self.save_to_db(parsed_json)
 
 
             else:
@@ -118,9 +124,9 @@ class ScrapFood:
 
     def parse_json_data(self, data) -> dict:
         to_dict = {}
-        
+
         to_dict["sourceUrl"] = data["url"]
-        to_dict["image"] = data["image"]["url"]
+        to_dict["image"] = data["image"][0]["url"]
         to_dict["videoUrl"] = "" 
         to_dict["videoDuration"] = ""
 
@@ -146,6 +152,37 @@ class ScrapFood:
         to_dict["recipeYield"] = data["recipeYield"]
 
         return to_dict
+    
+    def parse_other_json_data(self, data) -> dict:
+        to_dict = {}
+        to_dict["sourceUrl"] = data[0]["mainEntityOfPage"]["@id"]
+        to_dict["image"] = data[0]["image"][0]["url"]
+        to_dict["videoUrl"] = "" 
+        to_dict["videoDuration"] = ""
+
+        try:
+            to_dict["videoDuration"] = data[0]["video"]["duration"]
+            to_dict["videoUrl"] = data[0]["video"]["contentUrl"]
+        except:
+            pass
+        
+        to_dict["foodName"] = data[0]["name"]
+        to_dict["foodDescription"] = data[0]["description"]
+
+        to_dict["prepTime"] = data[0]["prepTime"]
+        to_dict["cookTime"] = data[0]["cookTime"]
+        to_dict["totalTime"] = data[0]["totalTime"]
+
+        to_dict["recipeIngredient"] = data[0]["recipeIngredient"]
+        to_dict["recipeInstructions"] = [ i["text"] for i in data[0]["recipeInstructions"] ]
+
+        to_dict["recipeCuisine"] = data[0]["recipeCuisine"]
+        to_dict["recipeCategory"] = data[0]["recipeCategory"]
+        
+        to_dict["recipeYield"] = data[0]["recipeYield"]
+
+        return to_dict
+
     def save_to_db(self, to_js):
         # 172.17.0.4
         client = pymongo.MongoClient("mongodb://localhost:27017")

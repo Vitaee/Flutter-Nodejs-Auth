@@ -25,3 +25,5 @@ idea/
 node_modules/
 
 .env
+.scraper-env
+ScrappingData/scraper-env
