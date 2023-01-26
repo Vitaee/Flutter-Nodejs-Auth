@@ -1,3 +1,4 @@
+from numpy import source
 import requests, time, pymongo, json
 from bs4 import BeautifulSoup
 
@@ -13,28 +14,30 @@ class ScrapFood:
 
     def start(self) -> None:
         source_links = []
-        req = requests.get(self.baseurl, headers=self.user_agent,timeout=10)
+        req = requests.get(self.baseurl, headers=self.user_agent,timeout=5)
         soup = BeautifulSoup(req.content, 'html.parser')
 
         all_source = soup.find_all('div', class_='slideshow-slide-dek')
 
-        for item in all_source:
+        for item in all_source[1:]:
             try:
                 source_link = item.find('a')['href']
-                if 'delish.com' not in source_link:
-                    source_link = "https://www.delish.com" + source_link
-
-                source_links.append(source_link)
+                if source_link[5:13] == '://patty' or source_link[5:13] == '://spicy':
+                    pass
+                else:
+                    if 'delish.com' not in source_link:
+                        if 'https://' not in source_link: 
+                            source_link = "https://www.delish.com" + source_link
+                    source_links.append(source_link)
             except:
                 pass
         self.analyse(source_links)
 
     def analyse(self, hrefs: list) -> None:
         for i in range(0, len(hrefs)):
-            req = requests.get("https://www.delish.com/cooking/recipe-ideas/a24228772/cheeseburger-stuffed-peppers-recipe/", headers=self.user_agent, timeout=10)
+            req = requests.get(hrefs[i], headers=self.user_agent, timeout=5)
             soup = BeautifulSoup(req.content, 'html.parser')
 
-            print("\n\n\n\n", hrefs[i], "\n\n\n\n\n")
             new_data = soup.find('script', id='json-ld')
             if new_data:
                 json_data = json.loads(new_data.text)
@@ -45,7 +48,7 @@ class ScrapFood:
                 except:
                     parsed_json = self.parse_other_json_data(json_data)
                 
-                if not parsed_json: 
+                if parsed_json: 
                     self.save_to_db(parsed_json)
 
 
@@ -124,7 +127,6 @@ class ScrapFood:
 
     def parse_json_data(self, data) -> dict:
         to_dict = {}
-
         to_dict["sourceUrl"] = data["url"]
         to_dict["image"] = data["image"][0]["url"]
         to_dict["videoUrl"] = "" 
@@ -195,12 +197,3 @@ class ScrapFood:
         if self.ingredients or self.directions:
             self.ingredients.clear()
             self.directions.clear()
-
-
-
-#a = ScrapFood(baseurl="https://www.delish.com/cooking/recipe-ideas/g3733/healthy-dinner-recipes/?slide=1")
-# https://www.delish.com/cooking/g3594/stuffed-zucchini/?slide=1
-# https://www.delish.com/cooking/recipe-ideas/g4203/gluten-free-dinner-ideas/?slide=1
-# https://www.delish.com/cooking/g4011/stuffed-pepper-recipes/?slide=1
-a = ScrapFood(baseurl="https://www.delish.com/cooking/g4011/stuffed-pepper-recipes/?slide=1")
-a.start()
