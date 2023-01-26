@@ -1,4 +1,3 @@
-from numpy import source
 import requests, time, pymongo, json
 from bs4 import BeautifulSoup
 
@@ -16,12 +15,22 @@ class ScrapFood:
         source_links = []
         req = requests.get(self.baseurl, headers=self.user_agent,timeout=5)
         soup = BeautifulSoup(req.content, 'html.parser')
-
-        all_source = soup.find_all('div', class_='slideshow-slide-dek')
-
-        for item in all_source[1:]:
+        
+        total_data_count = len(soup.find('div', class_='slide-container').find_all('div', class_='slideshow-slide'))
+        loaded_source = soup.find_all('div', class_='slideshow-slide-dek')
+        all_resources = []
+        if len(loaded_source) != total_data_count:
+            req = requests.get(self.baseurl.replace(self.baseurl[-1], str(total_data_count - 4)), headers=self.user_agent, timeout=5 )
+            soup = BeautifulSoup(req.content, 'html.parser')
+            start_from = len(loaded_source) + 1
+            remaining_source = soup.find_all('div', class_='slideshow-slide-dek')[start_from:]
+            
+            all_resources = loaded_source + remaining_source    
+        
+        print(len(all_resources), "<--- current length of all source list")
+        for item in all_resources:
             try:
-                source_link = item.find('a')['href']
+                source_link = item.find_all('a')[-1]['href']
                 if source_link[5:13] == '://patty' or source_link[5:13] == '://spicy':
                     pass
                 else:
@@ -31,27 +40,31 @@ class ScrapFood:
                     source_links.append(source_link)
             except:
                 pass
+        
+        print(source_links, "\n\n\n")
         self.analyse(source_links)
 
     def analyse(self, hrefs: list) -> None:
+        temp_data_list = []
         for i in range(0, len(hrefs)):
-            req = requests.get(hrefs[i], headers=self.user_agent, timeout=5)
+            print("\n\n", hrefs[i], "\n\n")
+
+            
+            req = requests.get(hrefs[i], headers=self.user_agent, timeout=10)
             soup = BeautifulSoup(req.content, 'html.parser')
 
             new_data = soup.find('script', id='json-ld')
             if new_data:
                 json_data = json.loads(new_data.text)
                 parsed_json = None
-                
                 try:
                     parsed_json = self.parse_json_data(json_data)
                 except:
                     parsed_json = self.parse_other_json_data(json_data)
                 
-                if parsed_json: 
-                    self.save_to_db(parsed_json)
-
-
+                if parsed_json:
+                    temp_data_list.append(parsed_json) 
+                    #self.save_to_db(parsed_json)
             else:
                 if soup.text in 'Service is currently unavailable. We apologize for the inconvenience. Please try again later.':
                     pass
@@ -122,8 +135,11 @@ class ScrapFood:
                         'image': food_photo
                     }
 
-
-                    self.save_to_db(to_js)
+                    temp_data_list.append(to_js)
+                    #self.save_to_db(to_js)
+            time.sleep(6)
+            
+        self.save_to_file(temp_data_list)
 
     def parse_json_data(self, data) -> dict:
         to_dict = {}
@@ -146,8 +162,14 @@ class ScrapFood:
         to_dict["totalTime"] = data["totalTime"]
 
         to_dict["recipeIngredient"] = data["recipeIngredient"]
-        to_dict["recipeInstructions"] = [ i["text"] for i in data["recipeInstructions"] ]
-
+        
+        try:
+            to_dict["recipeInstructions"] = [ i["text"] for i in data["recipeInstructions"] ]
+        except:
+            try:
+                to_dict["recipeInstructions"] = [ i["text"] for i in data["recipeInstructions"]['itemListElement'] ]
+            except:
+                to_dict["recipeInstructions"] = [ i["text"] for i in data["recipeInstructions"][0]['itemListElement'] ]
         to_dict["recipeCuisine"] = data["recipeCuisine"]
         to_dict["recipeCategory"] = data["recipeCategory"]
         
@@ -157,7 +179,12 @@ class ScrapFood:
     
     def parse_other_json_data(self, data) -> dict:
         to_dict = {}
-        to_dict["sourceUrl"] = data[0]["mainEntityOfPage"]["@id"]
+
+        try:
+            to_dict["sourceUrl"] = data[0]["mainEntityOfPage"]["@id"]
+        except KeyError:
+            to_dict["sourceUrl"] = data["mainEntityOfPage"]["@id"]
+
         to_dict["image"] = data[0]["image"][0]["url"]
         to_dict["videoUrl"] = "" 
         to_dict["videoDuration"] = ""
@@ -197,3 +224,13 @@ class ScrapFood:
         if self.ingredients or self.directions:
             self.ingredients.clear()
             self.directions.clear()
+
+    def save_to_file(self, js_data):
+        with open('sample_data.json', 'w+', encoding='UTF-8') as f:
+            json.dump(js_data, f)
+
+        if self.ingredients or self.directions:
+            self.ingredients.clear()
+            self.directions.clear()
+        
+        exit()
