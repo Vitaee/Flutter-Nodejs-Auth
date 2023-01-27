@@ -18,17 +18,16 @@ class ScrapFood:
         
         total_data_count = len(soup.find('div', class_='slide-container').find_all('div', class_='slideshow-slide'))
         loaded_source = soup.find_all('div', class_='slideshow-slide-dek')
-        all_resources = []
+
         if len(loaded_source) != total_data_count:
             req = requests.get(self.baseurl.replace(self.baseurl[-1], str(total_data_count - 4)), headers=self.user_agent, timeout=5 )
             soup = BeautifulSoup(req.content, 'html.parser')
             start_from = len(loaded_source) + 1
             remaining_source = soup.find_all('div', class_='slideshow-slide-dek')[start_from:]
             
-            all_resources = loaded_source + remaining_source    
+            loaded_source = loaded_source + remaining_source    
         
-        print(len(all_resources), "<--- current length of all source list")
-        for item in all_resources:
+        for item in loaded_source:
             try:
                 source_link = item.find_all('a')[-1]['href']
                 if source_link[5:13] == '://patty' or source_link[5:13] == '://spicy':
@@ -41,7 +40,6 @@ class ScrapFood:
             except:
                 pass
         
-        print(source_links, "\n\n\n")
         self.analyse(source_links)
 
     def analyse(self, hrefs: list) -> None:
@@ -226,7 +224,7 @@ class ScrapFood:
             self.directions.clear()
 
     def save_to_file(self, js_data):
-        with open('sample_data.json', 'w+', encoding='UTF-8') as f:
+        with open('sample_other_data.json', 'w+', encoding='UTF-8') as f:
             json.dump(js_data, f)
 
         if self.ingredients or self.directions:

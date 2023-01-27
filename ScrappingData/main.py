@@ -2,9 +2,9 @@ from healthyFoods import ScrapFood
 import time
 
 base_links = [
-"https://www.delish.com/cooking/recipe-ideas/g4203/gluten-free-dinner-ideas/?slide=1"
-"https://www.delish.com/cooking/g3594/stuffed-zucchini/?slide=1",
 "https://www.delish.com/cooking/recipe-ideas/g2992/weeknight-seafood-dinners/?slide=1",
+"https://www.delish.com/cooking/g3594/stuffed-zucchini/?slide=1",
+"https://www.delish.com/cooking/recipe-ideas/g4203/gluten-free-dinner-ideas/?slide=1",
 "https://www.delish.com/cooking/g1703/ground-beef-dishes/?slide=1",
 "https://www.delish.com/cooking/recipe-ideas/g3733/healthy-dinner-recipes/?slide=1",
 "https://www.delish.com/cooking/g2933/satisfying-chicken-recipes/?slide=2",

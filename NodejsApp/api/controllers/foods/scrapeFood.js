@@ -2,142 +2,91 @@ const {Food} = require('../../models/food');
 const errorJson = require('../../../utils/error');
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-/** 
- * Scrape food source links from home page end return them in the list.
- * 
- * @param {int} startPage - the start page number
- * @param {int} endPage - the last page number
-*/
-const scrapePages = async (startPage = 1 , endPage = 2) => {
-
-    var sourceLinks = [];
-    var url;
-
-    for (startPage; startPage <= endPage; startPage++) {
-
-        startPage > 1 ? 
-            url = `https://www.bbcgoodfood.com/search/recipes/page/${startPage}?q=Quick+and+healthy+recipes&sort=-date`
-        :
-            url = "https://www.bbcgoodfood.com/search/recipes?q=Quick+and+healthy+recipes&sort=-date"
-        
-
-        let html = await axios.get(url);
-
-        let $ = await cheerio.load(html.data);
-
-        
-
-        $('.standard-card-new__article-title').each(( i, elem ) => {
-            sourceLinks.push( "https://www.bbcgoodfood.com" + $(elem).attr('href') )
-        });
-        
-    }
-
-    return sourceLinks;
-
-};
+require('dotenv').config();
 
 /**
- * Scrape food details from source link and append to dict. 
- * 
- * @param {Array} sourceLinks - Contains source links
+ * Get limit param in the future. 
+ * @param {int} limit 
+ * @returns - Array of source links 
  */
-const scrapeDetails = async (sourceLinks) => {
+const getSourceLinks =  async () =>{
+    let response = await axios.get(process.env.API_URL)
+    let data = response.data
+    let arr = []
+    for (let x in data["items"]) {
+        const check_url_if_in_db = await Food.find({'sourceUrl':  "https://www.bbcgoodfood.com" + data["items"][x]['url'] });
 
-    var loop_datas = { "datas" : [] }
-
-    for (let index = 0; index < sourceLinks.length; index++) {
-
-        let html = await axios.get( sourceLinks[index] );
-        
-        let $ = await cheerio.load(html.data);
-        
-        let img_source = $('.image__img').eq(2).attr('src')
-
-        let food_title = $('.headline.post-header__title > h1').text()
-
-
-        let author_name = $('.author-link__list').text()
-        
-        let prep_time = $('.icon-with-text__children').eq(0).find('.list').eq(0).find('li').eq(0).text()
-
-        let cook_time = $('.icon-with-text__children').eq(0).find('.list').eq(0).find('li').eq(1).text()
-
-        let made_level = $('.icon-with-text__children').eq(1).text()
-
-        let servers = $('.icon-with-text__children').eq(2).text()
-
-        let short_info = $('.editor-content').eq(0).text()
-        
-        let nutrition_1 = $('.key-value-blocks__batch.body-copy-extra-small').eq(0).find('tr');
-
-        let nutrition_2 = $('.key-value-blocks__batch.body-copy-extra-small').eq(1).find('tr');
-
-        let nutritions = []
-
-        for (let i = 0; i < nutrition_1.length; i++) {
-            let info_1 = nutrition_1.eq(i).find('td').eq(1).text() + " " + nutrition_1.find('td').eq(2).text();
-            let info_2 = nutrition_2.eq(i).find('td').eq(1).text() + " " + nutrition_2.find('td').eq(2).text();
-
-            nutritions.push(info_1)
-            nutritions.push(info_2)
+        if (check_url_if_in_db.length >= 1) {
+            console.log("This food recipe already in database.")
+        } else {
+            arr.push("https://www.bbcgoodfood.com" + data["items"][x]['url'])
         }
-
-
-        let ingredients_element = $('.recipe__ingredients > section').find('ul > li')
-
-        let ingredients = []
-
-        for (let index = 0; index < ingredients_element.length; index++) {
-           ingredients.push( ingredients_element.eq(index).text() )
-            
-        }
-
-        let to_method = $('.grouped-list__list.list').find('li')
-        
-        let methods = []
-
-        for (let index = 0; index < to_method.length; index++) {
-            methods.push( to_method.eq(index).find('.editor-content').text() )
-            
-        }
-
-        js_data = {
-            "source_link": sourceLinks[index],
-            "image_source": img_source,
-            "food_title": food_title,
-            "made_by": author_name,
-            "prep_time" : prep_time,
-            "cook_time":cook_time,
-            "made_level": made_level,
-            "servers":servers,
-            "short_info":short_info,
-            "nutritions": nutritions,
-            "ingredients":ingredients,
-            "methods":methods
-        }
-
-        const check_title = await Food.find( {'food_title': food_title} );
-        if (check_title.length >= 1) {
-            return loop_datas["datas"]
-        }
-
-        loop_datas['datas'].push( js_data )
-
-        
-    
     }
 
-    return loop_datas["datas"];
+    return arr
+}
+
+const readDetails = async(sourceLinks = []) => {
+    temp_array = []
+
+    for (let index = 0; index < sourceLinks.length; index++) {
+        let json_object = {}
+        let response = await axios.get(sourceLinks[index])
+        let $ = await cheerio.load(response.data);
+
+        let data = JSON.parse( $('#__NEXT_DATA__')[0].children[0].data )
+
+
+        json_object["sourceUrl"] = data["props"]["pageProps"]["pageUrl"]
+        json_object["image"] = data["props"]["pageProps"]["image"]["url"]
+        json_object["videoUrl"] = ""
+        json_object["videoDuration"] = ""
+
+        json_object["foodName"] = data["props"]["pageProps"]["seoMetadata"]["title"]
+
+        json_object["foodDescription"] = data["props"]["pageProps"]["seoMetadata"]["description"]
+
+        json_object["prepTime"] = (data["props"]["pageProps"]["cookAndPrepTime"]["preparationMax"] / 60).toString() + " mins"
+        json_object["cookTime"] = (data["props"]["pageProps"]["cookAndPrepTime"]["cookingMax"] / 60).toString() + " mins"
+        json_object["totalTime"] = (data["props"]["pageProps"]["cookAndPrepTime"]["total"] / 60).toString() + " mins"
+
+
+        json_object["recipeNutrition"] = data["props"]["pageProps"]["permutiveModel"]["recipe"]["nutrition_info"]
+        json_object["recipeIngredient"] = data["props"]["pageProps"]["permutiveModel"]["recipe"]["ingredients"]
+        
+        let instructions = []
+        for(var i in data["props"]["pageProps"]["methodSteps"]) 
+            if (data["props"]["pageProps"]["methodSteps"][i]["content"][0]["data"]["value"].includes('<p>')){
+                instructions.splice(0)
+                break
+            }
+            instructions.push(data["props"]["pageProps"]["methodSteps"][i]["content"][0]["data"]["value"])
+        
+        for(var x in data["props"]["pageProps"]["schema"]["recipeInstructions"]){
+            instructions.push(data["props"]["pageProps"]["schema"]["recipeInstructions"][x]["text"])
+        }
+        instructions[0].includes('<p>') ? instructions.shift() : instructions
+
+        json_object["recipeInstructions"] = instructions
+        json_object["recipeCuisine"] = data["props"]["pageProps"]["permutiveModel"]["recipe"]["diet_types"]
+        json_object["recipeCategory"] = data["props"]["pageProps"]["permutiveModel"]["category"]    
+
+        let recipeYield = data["props"]["pageProps"]["permutiveModel"]["recipe"]["serves"] 
+        json_object["recipeYield"] = recipeYield ? recipeYield.toString() : data["props"]["pageProps"]["servings"]
+
+        json_object["authorName"] = data["props"]["pageProps"]["authors"][0]["name"]
+
+        temp_array.push(json_object) 
+        
+    }
+
+    return temp_array
 
 }
 
-module.exports = async (req, res) => {
-    let sourceLinks;
-    req.query.startPage ? sourceLinks = await scrapePages(req.query.startPage, req.query.endPage) : sourceLinks = await scrapePages(1,1);
-
-    let foodDetails = await scrapeDetails(sourceLinks);
+module.exports = async (req, res) => {    
+    let sourceLinks = await getSourceLinks()
+    let foodDetails = await readDetails(sourceLinks)
 
     if (foodDetails.length >= 1){
         const result = await Food.collection.insertMany(foodDetails, { ordered:true } )
@@ -145,9 +94,7 @@ module.exports = async (req, res) => {
         return res.status(200).send( {'msg': result.insertedCount + " documents were inserted."} )
     }
 
-    return res.status(200).send( {'msg': "Data alraedy exist in db please try again later."} )
-    
-    
+    return res.status(409).send({'msg' : 'Data is already exist in database!'})
 
 };
 
