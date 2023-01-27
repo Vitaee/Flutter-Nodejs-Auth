@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login_register/Screens/home/home.dart';
+import 'Screens/home/new_home.dart';
 import 'Screens/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

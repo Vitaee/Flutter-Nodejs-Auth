@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:login_register/Components/background.dart';
+import 'package:login_register/Screens/home/new_home.dart';
 import 'package:login_register/Screens/register/register.dart';
 import 'package:http/http.dart' as http;
 import 'package:login_register/Screens/home/home.dart';
