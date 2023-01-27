@@ -44,10 +44,7 @@ class ScrapFood:
 
     def analyse(self, hrefs: list) -> None:
         temp_data_list = []
-        for i in range(0, len(hrefs)):
-            print("\n\n", hrefs[i], "\n\n")
-
-            
+        for i in range(0, len(hrefs)):            
             req = requests.get(hrefs[i], headers=self.user_agent, timeout=10)
             soup = BeautifulSoup(req.content, 'html.parser')
 
@@ -137,6 +134,7 @@ class ScrapFood:
                     #self.save_to_db(to_js)
             time.sleep(6)
             
+            
         self.save_to_file(temp_data_list)
 
     def parse_json_data(self, data) -> dict:
@@ -172,6 +170,10 @@ class ScrapFood:
         to_dict["recipeCategory"] = data["recipeCategory"]
         
         to_dict["recipeYield"] = data["recipeYield"]
+        try:
+            to_dict["authorName"] = data["author"]["name"]
+        except:
+            to_dict["authorName"] = ""
 
         return to_dict
     
@@ -207,6 +209,10 @@ class ScrapFood:
         to_dict["recipeCategory"] = data[0]["recipeCategory"]
         
         to_dict["recipeYield"] = data[0]["recipeYield"]
+        try:
+            to_dict["authorName"] = data[0]["author"]["name"]
+        except:
+            to_dict["authorName"] = ""
 
         return to_dict
 
