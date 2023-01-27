@@ -4,6 +4,8 @@ import 'dart:convert' show json, base64, ascii;
 import 'package:http/http.dart' as http;
 import 'package:login_register/Screens/detail/details.dart';
 import 'package:login_register/Screens/menu/draw_menu.dart';
+import 'package:login_register/core/widget/error/error_widget.dart';
+import 'package:login_register/core/widget/loading/loading_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -74,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ? ErrorDataView()
                     : snapshot.data != null
                         ? NullDataView()
-                        : CircularProgressIndicator(),
+                        : LoadingView(),
       ),
       bottomNavigationBar: _customBottomNavigateBar(),
     );
@@ -108,11 +110,11 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (context, index) {
           return _buildFoodItem(
             context,
-            snapshot.data?[index].imageSource,
-            snapshot.data?[index].foodTitle,
-            snapshot.data?[index].madeBy,
-            snapshot.data?[index].methods,
-            snapshot.data?[index].ingredients,
+            snapshot.data?[index].image,
+            snapshot.data?[index].foodName,
+            snapshot.data?[index].authorName,
+            snapshot.data?[index].recipeInstructions,
+            snapshot.data?[index].recipeIngredient,
             index,
           );
         });
@@ -160,15 +162,21 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Widget _buildFoodItem(BuildContext context, String? imgPath, String? foodName,
-      String? sharedBy, List? description, List? details, int? index) {
+  Widget _buildFoodItem(
+      BuildContext context,
+      String? imgPath,
+      String? foodName,
+      String? sharedBy,
+      List<String>? description,
+      List<String>? details,
+      int? index) {
     return ListTile(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => DetailScreen(
                   foodName: foodName.toString(),
                   sharedBy: sharedBy.toString(),
-                  description: description,
+                  description: description!,
                   details: details,
                   image: imgPath.toString(),
                 )));
@@ -200,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Text _buildListTileSubtitle(String? sharedBy) {
     return Text(
-      sharedBy.toString(),
+      "by " + sharedBy.toString(),
       style: TextStyle(fontSize: 14.0, color: Colors.grey),
     );
   }
@@ -223,17 +231,6 @@ class NullDataView extends StatelessWidget {
     return Center(
       child: Text("There is no foods.."),
     );
-  }
-}
-
-class ErrorDataView extends StatelessWidget {
-  const ErrorDataView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("An error accrued."));
   }
 }
 

@@ -1,64 +1,80 @@
 class Foods {
-  List<String>? nutritions;
-  List<String>? ingredients;
-  List<String>? methods;
+  List<String>? recipeNutrition;
+  List<String>? recipeIngredient;
+  List<String>? recipeInstructions;
+  List<String>? recipeCuisine;
+  List<String>? recipeCategory;
   String? sId;
-  String? sourceLink;
-  String? imageSource;
-  String? foodTitle;
-  String? madeBy;
+  String? sourceUrl;
+  String? image;
+  String? videoUrl;
+  String? videoDuration;
+  String? foodName;
+  String? foodDescription;
   String? prepTime;
   String? cookTime;
-  String? madeLevel;
-  String? servers;
-  String? shortInfo;
+  String? totalTime;
+  String? recipeYield;
+  String? authorName;
 
   Foods(
-      {required this.nutritions,
-      required this.ingredients,
-      required this.methods,
-      required this.sId,
-      required this.sourceLink,
-      required this.imageSource,
-      required this.foodTitle,
-      required this.madeBy,
-      required this.prepTime,
-      required this.cookTime,
-      required this.madeLevel,
-      required this.servers,
-      required this.shortInfo});
+      {this.recipeNutrition,
+      this.recipeIngredient,
+      this.recipeInstructions,
+      this.recipeCuisine,
+      this.recipeCategory,
+      this.sId,
+      this.sourceUrl,
+      this.image,
+      this.videoUrl,
+      this.videoDuration,
+      this.foodName,
+      this.foodDescription,
+      this.prepTime,
+      this.cookTime,
+      this.totalTime,
+      this.recipeYield,
+      this.authorName});
 
   Foods.fromJson(Map<String, dynamic> json) {
-    nutritions = json['nutritions'].cast<String>();
-    ingredients = json['ingredients'].cast<String>();
-    methods = json['methods'].cast<String>();
+    recipeNutrition = json['recipeNutrition'].cast<String>();
+    recipeIngredient = json['recipeIngredient'].cast<String>();
+    recipeInstructions = json['recipeInstructions'].cast<String>();
+    recipeCuisine = json['recipeCuisine'].cast<String>();
+    recipeCategory = json['recipeCategory'].cast<String>();
     sId = json['_id'];
-    sourceLink = json['source_link'];
-    imageSource = json['image_source'];
-    foodTitle = json['food_title'];
-    madeBy = json['made_by'];
-    prepTime = json['prep_time'];
-    cookTime = json['cook_time'];
-    madeLevel = json['made_level'];
-    servers = json['servers'];
-    shortInfo = json['short_info'];
+    sourceUrl = json['sourceUrl'];
+    image = json['image'];
+    videoUrl = json['videoUrl'];
+    videoDuration = json['videoDuration'];
+    foodName = json['foodName'];
+    foodDescription = json['foodDescription'];
+    prepTime = json['prepTime'];
+    cookTime = json['cookTime'];
+    totalTime = json['totalTime'];
+    recipeYield = json['recipeYield'];
+    authorName = json['authorName'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['nutritions'] = this.nutritions;
-    data['ingredients'] = this.ingredients;
-    data['methods'] = this.methods;
+    data['recipeNutrition'] = this.recipeNutrition;
+    data['recipeIngredient'] = this.recipeIngredient;
+    data['recipeInstructions'] = this.recipeInstructions;
+    data['recipeCuisine'] = this.recipeCuisine;
+    data['recipeCategory'] = this.recipeCategory;
     data['_id'] = this.sId;
-    data['source_link'] = this.sourceLink;
-    data['image_source'] = this.imageSource;
-    data['food_title'] = this.foodTitle;
-    data['made_by'] = this.madeBy;
-    data['prep_time'] = this.prepTime;
-    data['cook_time'] = this.cookTime;
-    data['made_level'] = this.madeLevel;
-    data['servers'] = this.servers;
-    data['short_info'] = this.shortInfo;
+    data['sourceUrl'] = this.sourceUrl;
+    data['image'] = this.image;
+    data['videoUrl'] = this.videoUrl;
+    data['videoDuration'] = this.videoDuration;
+    data['foodName'] = this.foodName;
+    data['foodDescription'] = this.foodDescription;
+    data['prepTime'] = this.prepTime;
+    data['cookTime'] = this.cookTime;
+    data['totalTime'] = this.totalTime;
+    data['recipeYield'] = this.recipeYield;
+    data['authorName'] = this.authorName;
     return data;
   }
 }

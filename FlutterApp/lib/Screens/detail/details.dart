@@ -13,7 +13,8 @@ class DetailScreen extends StatefulWidget {
   final String foodName;
   final String sharedBy;
   final String image;
-  final dynamic description, details;
+  final List<String>? description;
+  final dynamic details;
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -108,11 +109,11 @@ class _DetailScreenState extends State<DetailScreen> {
                       children: [
                         Container(
                           color: Colors.white24,
-                          child: DetailContentMenu(widget.details),
+                          child: DetailContentMenu(widget.description),
                         ),
                         Container(
                           color: Colors.white24,
-                          child: DetailContentMenu(widget.description),
+                          child: DetailContentMenu(widget.details),
                         ), // class name
                       ],
                     ),
@@ -189,16 +190,16 @@ class FoodTitleWidget extends StatelessWidget {
 class DetailContentMenu extends StatelessWidget {
   DetailContentMenu(this.detail);
 
-  final List detail;
+  final List<String>? detail;
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: detail.length,
+      itemCount: detail!.length,
       itemBuilder: (context, index) {
         return Container(
           margin: EdgeInsets.all(5.0),
           child: Text(
-            "•  " + detail[index],
+            "•  " + detail![index],
             style: TextStyle(
                 fontSize: 14.0,
                 color: Colors.black87,
