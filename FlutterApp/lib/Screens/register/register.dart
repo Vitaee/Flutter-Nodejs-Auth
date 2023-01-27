@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:login_register/Components/background.dart';
 import 'package:login_register/Screens/home/home.dart';
-import 'package:login_register/Screens/home/new_home.dart';
 import 'package:login_register/Screens/login/login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
