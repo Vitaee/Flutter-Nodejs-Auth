@@ -28,6 +28,10 @@ node_modules/
 .scraper-env
 ScrappingData/scraper-env
 
+ScrappingData/sample_data
+
+
+NodejsApp/.env.prod
 NodejsApp/prod.env
 NodejsApp/.prod.env
 NodejsApp/env
