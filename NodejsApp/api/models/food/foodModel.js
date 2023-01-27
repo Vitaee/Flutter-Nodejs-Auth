@@ -1,41 +1,68 @@
 const moongoose = require('mongoose');
 
+/*
+sourceUrl
+image
+videoUrl
+videoDuration
+foodName
+foodDescription
+prepTime
+cookTime
+totalTime
+recipeNutrition
+recipeIngredient
+recipeInstructions
+recipeCuisine
+recipeCategory
+recipeYield
+authorName
 
+*/
 const foodSchema = moongoose.Schema({
-    source_link: {
+    sourceUrl: {
         type: String
     },
-    image_source: {
+    image: {
         type: String
     },
-    food_title: {
+    videoUrl: {
         type: String
     },
-    made_by: {
+    videoDuration: {
         type: String
     },
-    prep_time: {
+    foodName: {
         type: String
     },
-    cook_time: {
+    foodDescription: {
         type: String
     },
-    made_level: {
+    prepTime: {
         type: String
     },
-    servers: {
+    cookTime: {
         type: String
     },
-    short_info: {
+    totalTime: {
         type: String
     },
-    
-    nutritions: [String],
+    recipeNutrition: [String],
 
-    ingredients: [String],
+    recipeIngredient: [String],
     
-    methods: [String],
+    recipeInstructions: [String],
 
+    recipeCuisine: [String],
+    
+    recipeCategory: [String],
+    recipeYield:  { 
+        type: String
+    },
+    authorName: {
+        type: String
+    }
+    
 }, {timestamps:true});
 
 const Food = moongoose.model('Food', foodSchema);
