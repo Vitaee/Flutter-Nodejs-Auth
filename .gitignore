@@ -36,3 +36,4 @@ NodejsApp/prod.env
 NodejsApp/.prod.env
 NodejsApp/env
 NodejsApp/.env
+NodejsApp/public
