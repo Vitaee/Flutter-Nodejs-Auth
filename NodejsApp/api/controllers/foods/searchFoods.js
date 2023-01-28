@@ -1,6 +1,6 @@
-const { Food } = require('../../models/food');
+import { foodModel } from '../../models/food/index.js';
 
-module.exports = async (req,res) => {
+export default async (req,res) => {
   try {
       let data = req.body;
       let queryArr = []
@@ -14,7 +14,7 @@ module.exports = async (req,res) => {
         index_count += 1
       }
 
-      const results = await Food.find({ $or: queryArr })
+      const results = await foodModel.find({ $or: queryArr })
         
       results.length >= 1 ? res.status(200).send(results) : res.status(200).send({"msg":"Not found."})
           

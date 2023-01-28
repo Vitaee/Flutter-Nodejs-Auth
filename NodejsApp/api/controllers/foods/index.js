@@ -1,8 +1,4 @@
-const getFoods = require('./getFoods');
-const searchFood = require('./searchFoods');
-const scrapeFood = require('./scrapeFood');
-module.exports = {
-    getFoods:getFoods,
-    searchFood:searchFood,
-    scrapeFood:scrapeFood
-}
+import getFoods from './getFoods.js';
+import searchFood from './searchFoods.js';
+import scrapeFood from './scrapeFood.js';
+export  {getFoods,searchFood,scrapeFood}

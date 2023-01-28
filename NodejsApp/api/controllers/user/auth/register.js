@@ -1,12 +1,15 @@
-const bcrypt = require("bcryptjs");
-const { User, userValidate  } = require("../../../models/user");
-const errorJson = require("../../../../utils/error");
-const generateRandomCode = require("../../../../utils/generate-random-code");
-const jwt = require('../../../../utils/jwtHelper');
+import bcryptjs from "bcryptjs";
+import { User, validateRegister } from "../../../models/user/index.js";
+import errorJson from "../../../../utils/error.js";
+import generateRandomCode from "../../../../utils/generate-random-code.js";
+import { signAccessToken } from '../../../../utils/jwtHelper.js';
+import { uploadFile } from '../../../../utils/bucketUpload.js';
+
 
 let errorObject = {}
-module.exports = async (req,res) => {
-    const {error} = userValidate.register(req.body);
+export default async (req,res) => {
+    const {error} = validateRegister(req.body);
+
     if (error){
          if (error.details[0].message.includes("email"))
       errorObject = {msg: "Please provide a valid email!"};
@@ -37,11 +40,15 @@ module.exports = async (req,res) => {
 
         }while (unique);
 
-    const hash = await bcrypt.hash(req.body.password, 10);
+    const hash = await bcryptjs.hash(req.body.password, 10);
+    const uploadedImage = await uploadFile(req.file);
+
     let user = new User({
         email:req.body.email.trim(),
         password:hash,
         username: username,
+        profileImage: uploadedImage,
+        bio: req.body.bio,
         lastLogin: Date.now(),
     });
 
@@ -50,7 +57,7 @@ module.exports = async (req,res) => {
             .status(500).json(errorJson(err.message,"An interval server error while registering you."))
     });
 
-    const authorization = await jwt.signAccessToken(user._id);
+    const authorization = await signAccessToken(user._id);
 
     return res.status(200).send(authorization);
 

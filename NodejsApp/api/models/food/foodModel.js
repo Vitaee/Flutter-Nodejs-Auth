@@ -1,25 +1,6 @@
-const moongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-/*
-sourceUrl
-image
-videoUrl
-videoDuration
-foodName
-foodDescription
-prepTime
-cookTime
-totalTime
-recipeNutrition
-recipeIngredient
-recipeInstructions
-recipeCuisine
-recipeCategory
-recipeYield
-authorName
-
-*/
-const foodSchema = moongoose.Schema({
+const foodSchema =  mongoose.Schema({
     sourceUrl: {
         type: String
     },
@@ -65,10 +46,7 @@ const foodSchema = moongoose.Schema({
     
 }, {timestamps:true});
 
-const Food = moongoose.model('Food', foodSchema);
+const Food = mongoose.model('Food', foodSchema);
 
-module.exports = {
-    Food:Food,
-    foodSchema:foodSchema
-}
-
+export const foodModel = Food
+export const schemaFood = foodSchema 

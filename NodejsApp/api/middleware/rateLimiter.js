@@ -1,8 +1,8 @@
-const {RateLimiterMongo} = require('rate-limiter-flexible');
-const mongoose = require('mongoose');
-const errorJson = require('../../utils/error');
-require('dotenv').config();
-
+import { RateLimiterMongo } from 'rate-limiter-flexible';
+import mongoose from 'mongoose';
+import errorJson from '../../utils/error.js';
+import * as dotenv from 'dotenv'
+dotenv.config()
 const mongoOpts = {
     useCreateIndex: true,
     useNewUrlParser: true,
@@ -19,7 +19,7 @@ const opts = {
     duration:60
 }
 
-module.exports = (req,res,next) => {
+export default (req,res,next) => {
     const rateLimiterMongo = new RateLimiterMongo(opts);
     rateLimiterMongo.consume(req.ip)
         .then(() => {

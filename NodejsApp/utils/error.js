@@ -1,4 +1,4 @@
-module.exports = ( errorMessage, customMessage) => {
+export default ( errorMessage, customMessage) => {
     return {
         "resultMessage": {
             "msg": errorMessage,

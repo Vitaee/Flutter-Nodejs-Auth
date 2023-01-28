@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const email_match =  /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
 
 
-const userSchema = mongoose.Schema({
+const userSchema =  mongoose.Schema({
     username:{
         type:String, required:true
     },
@@ -12,19 +12,18 @@ const userSchema = mongoose.Schema({
     password:{
         type:String,required:true,select:false
     },
-    img:{
-        data: Buffer,
-        contentType: String
+    profileImage:{
+        type: String
+    },
+    bio: {
+        type: String
     },
     lastLogin: {
-    type: Date,
+        type: Date,
     },
 
 },{timestamps:true});
 
 const User = mongoose.model('User',userSchema);
 
-module.exports = {
-    User:User,
-    userSchema:userSchema
-}
+export { User, userSchema } 

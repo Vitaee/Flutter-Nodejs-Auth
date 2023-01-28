@@ -1,8 +1,4 @@
-const userModel = require('./userModel');
-const userValidate = require('./userValidate');
+import { User, userSchema } from './userModel.js';
+import { validateRegister, validateUserLogin } from './userValidate.js';
 
-module.exports = {
-    User:userModel.User,
-    userSchema: userModel.userSchema,
-    userValidate:userValidate,
-};
+export {  User, userSchema, validateRegister, validateUserLogin  }

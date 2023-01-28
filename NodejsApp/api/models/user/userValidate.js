@@ -1,5 +1,4 @@
-const Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi);
+import Joi from "joi";
 
 function validateRegister(user){
     const schema = Joi.object({
@@ -18,7 +17,4 @@ function validateUserLogin(user){
     return schema.validate(user);
 }
 
-module.exports = {
-    register:validateRegister,
-    login: validateUserLogin,
-}
+export {  validateRegister,validateUserLogin }

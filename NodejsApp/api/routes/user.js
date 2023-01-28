@@ -1,31 +1,10 @@
-const express = require("express");
-const router = express.Router();
-const userController = require('../controllers/user');
-const upload = require('../../utils/multerUpload');
-const s3Manager = require("../../utils/bucketUpload");
+import { Router } from "express";
+const router = Router();
+import { registerUser, loginUser, currentUser } from '../controllers/user/index.js';
+import { upload } from '../../utils/multerUpload.js';
 
-router.post("/",userController.register);
-router.post('/login',userController.login);
-router.get('/data',userController.getUser);
+router.post("/",upload.single('profileImage'), registerUser);
+router.post('/login',loginUser);
+router.get('/data',currentUser);
 
-router.post("/single", upload.single("image"), async (req, res) => {
-  console.log(req.body)
-  console.log(req.file);
-  
-  // uploading to AWS S3
-  const result = await s3Manager.uploadFile(req.file);
-  console.log("S3 response", result);
-  
-  // You may apply filter, resize image before sending to client
-  
-  // Deleting from local if uploaded in S3 bucket
-  //await unlinkFile(req.file.path);
-  
-  res.send({
-      status: "success",
-      message: "File uploaded successfully",
-      data: req.file,
-  });
-});
-
-module.exports = router;
+export default router;

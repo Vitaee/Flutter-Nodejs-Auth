@@ -1,12 +1,12 @@
-const multer = require("multer");
-var fs = require("fs");
+import multer, { diskStorage } from "multer";
+import { existsSync, mkdirSync } from "fs";
 
-var dir = "../public/images";
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true });
+var dir = "./public/images";
+if (!existsSync(dir)) {
+  mkdirSync(dir, { recursive: true });
 }
 
-const fileStorageEngine = multer.diskStorage({
+const fileStorageEngine = diskStorage({
   destination: (req, file, cb) => {
     cb(null, dir);
   },
@@ -17,4 +17,4 @@ const fileStorageEngine = multer.diskStorage({
 
 const upload = multer({ storage: fileStorageEngine });
 
-module.exports = upload;
+export{ upload }

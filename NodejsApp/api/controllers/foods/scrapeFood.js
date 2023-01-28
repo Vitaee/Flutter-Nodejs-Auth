@@ -1,8 +1,9 @@
-const {Food} = require('../../models/food');
-const errorJson = require('../../../utils/error');
-const axios = require('axios');
-const cheerio = require('cheerio');
-require('dotenv').config();
+import { foodModel } from '../../models/food/index.js';
+import errorJson from '../../../utils/error.js';
+import axios from 'axios';
+import load from 'cheerio';
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 /**
  * These function scrape links from a response
@@ -15,7 +16,7 @@ const getSourceLinks =  async () =>{
     let data = response.data
     let arr = []
     for (let x in data["items"]) {
-        const check_url_if_in_db = await Food.find({'sourceUrl':  "https://www.bbcgoodfood.com" + data["items"][x]['url'] });
+        const check_url_if_in_db = await foodModel.find({'sourceUrl':  "https://www.bbcgoodfood.com" + data["items"][x]['url'] });
 
         if (check_url_if_in_db.length >= 1) {
             console.log("This food recipe already in database.")
@@ -33,12 +34,12 @@ const getSourceLinks =  async () =>{
  * @returns - Array of json object that contains data.
  */
 const readDetails = async(sourceLinks = []) => {
-    temp_array = []
+    let temp_array = []
 
     for (let index = 0; index < sourceLinks.length; index++) {
         let json_object = {}
         let response = await axios.get(sourceLinks[index])
-        let $ = await cheerio.load(response.data);
+        let $ = await load(response.data);
 
         let data = JSON.parse( $('#__NEXT_DATA__')[0].children[0].data )
 
@@ -90,17 +91,17 @@ const readDetails = async(sourceLinks = []) => {
 
 }
 
-module.exports = async (req, res) => {    
+export default async (req, res) => {    
     let sourceLinks = await getSourceLinks()
     let foodDetails = await readDetails(sourceLinks)
 
     if (foodDetails.length >= 1){
-        const result = await Food.collection.insertMany(foodDetails, { ordered:true } )
+        const result = await foodModel.insertMany(foodDetails, { ordered:true } )
 
         return res.status(200).send( {'msg': result.insertedCount + " documents were inserted."} )
     }
 
-    return res.status(409).errorJson(errorJson(err, 'Data is already exist in database!'))
+    return res.status(409).send( {'msg': 'Data is already exist in database!'})
 
 };
 

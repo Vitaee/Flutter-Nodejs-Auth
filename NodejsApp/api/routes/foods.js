@@ -1,8 +1,8 @@
-const express = require("express");
-const router = express.Router();
-const foodController = require('../controllers/foods');
+import { Router } from "express";
+const router = Router();
+import { getFoods, searchFood, scrapeFood } from '../controllers/foods/index.js';
 
-router.get('/',foodController.getFoods);
-router.post('/search', foodController.searchFood);
-router.get('/scrape',foodController.scrapeFood);
-module.exports = router;
+router.get('/',getFoods);
+router.post('/search', searchFood);
+router.get('/scrape',scrapeFood);
+export default router;

@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-require('dotenv').config();
-
+import mongoose from 'mongoose';
+import * as dotenv from 'dotenv'
+dotenv.config()
 const db = () => {
 	mongoose.connect(process.env.DB,
 			{
@@ -20,4 +20,4 @@ const db = () => {
 	mongoose.Promise = global.Promise;
 };
 
-module.exports = { db };
+export { db };

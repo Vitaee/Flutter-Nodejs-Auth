@@ -1,20 +1,19 @@
-const {User} = require('../../models/user');
-const errorJson = require('../../../utils/error');
+import jsonwebtoken from 'jsonwebtoken';
+import { User } from '../../models/user/index.js';
+import errorJson from '../../../utils/error.js';
+import * as dotenv from 'dotenv'
+dotenv.config()
 
-require('dotenv').config();
-const JWT = require('jsonwebtoken');
-
-module.exports = async (req,res) => {
-    var str = req.get('authorization');
+export default async (req,res) => {
+    let str = req.get('authorization').split(" ")[1];
   try {
-    const data = await JWT.verify(str, process.env.JWT_SECRET_KEY );
-    console.log(data._id)
+    const data =  jsonwebtoken.verify(str, process.env.JWT_SECRET_KEY );
 
     let user =  await User.findById(data._id).catch((e) => {
       return res.status(500).json(errorJson(e, 'An interval server error occurred while getting your information, please try again.'))
     });
 
-    res.status(200).send([{email:user.email, username:user.username}]);
+    res.status(200).send([{email:user.email, username:user.username, profileImage: user.profileImage, bio: user.bio}]);
     
   } catch (err) {
     res.status(401);

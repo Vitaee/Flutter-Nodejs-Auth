@@ -1,12 +1,13 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const morgan = require('morgan');
-const dotenv = require('dotenv');
-const mongoose = require('./api/middleware/db');
-const errorJson = require('./utils/error');
-const rateLimiter = require('./api/middleware/rateLimiter');
+import express from 'express';
+import morgan from 'morgan';
+import { db } from './api/middleware/db.js';
+import errorJson from './utils/error.js';
+import rateLimiter from './api/middleware/rateLimiter.js';
+import Routes from './api/routes/index.js';
+import * as dotenv from 'dotenv'
+dotenv.config()
+
 const app = express();
-dotenv.config();
 
 process.on('uncaughtException', (error) => {
 	console.log(error);
@@ -21,12 +22,11 @@ const PORT = process.env.port || 3000;
 app.use(morgan('dev'));
 app.use(rateLimiter);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.set('trust proxy', true);
-mongoose.db();
+db();
 
-const Routes = require('./api/routes');
 
 app.get('/', (req, res) => {
 	res.status(200).json({resultMessage: 'Our App is successfully working...'});

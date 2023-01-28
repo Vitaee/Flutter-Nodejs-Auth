@@ -1,6 +1,3 @@
-const foodModel = require('./foodModel');
+import { foodModel, schemaFood } from './foodModel.js';
 
-module.exports = {
-    Food:foodModel.Food,
-    foodSchema: foodModel.foodSchema
-}
+export  {foodModel, schemaFood}
