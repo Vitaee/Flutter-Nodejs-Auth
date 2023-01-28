@@ -4,8 +4,12 @@ import 'dart:convert' show json, base64, ascii;
 import 'package:http/http.dart' as http;
 import 'package:login_register/Screens/detail/details.dart';
 import 'package:login_register/Screens/menu/draw_menu.dart';
+import 'package:login_register/core/const/border/border_radi.dart';
+import 'package:login_register/core/const/enums/icon_enums/icon_enums.dart';
+import 'package:login_register/core/const/responsive/responsive.dart';
 import 'package:login_register/core/widget/error/error_widget.dart';
 import 'package:login_register/core/widget/loading/loading_widget.dart';
+import 'package:login_register/core/widget/nullData/null_data_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -28,7 +32,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final String appTitle = 'Healthy Food';
+  final String appTitle = 'Hello, Sedat';
+  final String txtFormTitle = "Search Food...";
   logOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('jwt');
@@ -84,40 +89,188 @@ class _HomeScreenState extends State<HomeScreen> {
 
   AppBar _buildCustomAppBar() {
     return AppBar(
-      backgroundColor: Color(0xFF4478FA),
-      title: Text(appTitle,
-          style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 22.0)),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      iconTheme: IconThemeData(color: Colors.grey),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.account_circle),
+          tooltip: 'Open user cart',
+          onPressed: () {},
+        ),
+      ],
     );
   }
 
-  Container _buildMainBody(
-      BuildContext context, AsyncSnapshot<List<Foods>> snapshot) {
+  _buildMainBody(BuildContext context, AsyncSnapshot<List<Foods>> snapshot) {
+    return Padding(
+      padding: context.minAllPadding,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildWelcomeText(),
+            SizedBox(
+              height: context.dynamicHeight(0.02),
+            ),
+            _buildTextFormContainer(context),
+            SizedBox(
+              height: context.dynamicHeight(0.02),
+            ),
+            Container(
+              height: context.dynamicHeight(0.7),
+              child: _buildGridViewBuilder(snapshot),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Text _buildWelcomeText() {
+    return Text(appTitle,
+        style: TextStyle(
+            color: Colors.black54,
+            fontWeight: FontWeight.bold,
+            fontSize: 22.0));
+  }
+
+  Container _buildTextFormContainer(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8.0),
-      height: MediaQuery.of(context).size.height * 0.83,
-      color: Colors.white,
-      child: _buildListViewBuilder(snapshot),
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.1),
+          spreadRadius: 5,
+          blurRadius: 7,
+          offset: Offset(0, 5),
+        ),
+      ]),
+      height: context.dynamicHeight(0.05),
+      width: context.dynamicWidth(0.7),
+      child: _buildCustomTextFormField(context),
     );
   }
 
-  ListView _buildListViewBuilder(AsyncSnapshot<List<Foods>> snapshot) {
-    return ListView.builder(
-        itemCount: snapshot.data!.length,
-        controller: _scrollController,
-        itemBuilder: (context, index) {
-          return _buildFoodItem(
-            context,
-            snapshot.data?[index].image,
-            snapshot.data?[index].foodName,
-            snapshot.data?[index].authorName,
-            snapshot.data?[index].recipeInstructions,
-            snapshot.data?[index].recipeIngredient,
-            index,
-          );
-        });
+  TextFormField _buildCustomTextFormField(BuildContext context) {
+    return TextFormField(
+      decoration: _buildTextFormDecoration(context),
+    );
+  }
+
+  InputDecoration _buildTextFormDecoration(BuildContext context) {
+    return InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
+        contentPadding: context.midLTRB,
+        isDense: true,
+        prefixIcon: Icon(Icons.search),
+        enabledBorder: _buildEnabledBorder(),
+        focusedBorder: _buildFocusedBorder(),
+        hintText: txtFormTitle);
+  }
+
+  OutlineInputBorder _buildEnabledBorder() {
+    return OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.grey.shade300,
+          width: 1.0,
+        ),
+        borderRadius: BorderRadi.highCircular);
+  }
+
+  OutlineInputBorder _buildFocusedBorder() {
+    return OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.grey.shade300,
+          width: 1.0,
+        ),
+        borderRadius: BorderRadi.highCircular);
+  }
+
+  _buildGridViewBuilder(AsyncSnapshot<List<Foods>> snapshot) {
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        crossAxisSpacing: context.dynamicHeight(0.01),
+        mainAxisSpacing: context.dynamicHeight(0.01),
+        mainAxisExtent: context.dynamicHeight(0.4),
+        maxCrossAxisExtent: context.dynamicHeight(0.4),
+      ),
+      controller: _scrollController,
+      itemCount: snapshot.data!.length,
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => DetailScreen(
+                      foodName: snapshot.data?[index].foodName.toString() ?? "",
+                      sharedBy:
+                          snapshot.data?[index].authorName.toString() ?? "",
+                      description:
+                          snapshot.data?[index].foodDescription.toString() ??
+                              "",
+                      details: snapshot.data?[index].recipeInstructions,
+                      image: snapshot.data?[index].image.toString() ?? "",
+                      receipt: snapshot.data?[index].recipeNutrition,
+                    )));
+          },
+          child: Container(
+            decoration: BoxDecoration(boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 5),
+              ),
+            ], color: Colors.white, borderRadius: BorderRadi.midCircular),
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadi.midCircular,
+                  child: Image.network(
+                      snapshot.data?[index].image.toString() ?? "",
+                      height: context.dynamicHeight(0.2),
+                      fit: BoxFit.contain),
+                ),
+                SizedBox(
+                  height: context.dynamicHeight(0.02),
+                ),
+                Text(
+                  snapshot.data?[index].foodName.toString() ?? "",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600),
+                  textWidthBasis: TextWidthBasis.longestLine,
+                ),
+                SizedBox(
+                  height: context.dynamicHeight(0.02),
+                ),
+                Text(
+                  snapshot.data?[index].foodDescription.toString() ?? "",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14.0,
+                  ),
+                  textWidthBasis: TextWidthBasis.longestLine,
+                ),
+                SizedBox(
+                  height: context.dynamicHeight(0.02),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IconEnums.ic_kcal.toImage,
+                    Text(snapshot.data?[index].recipeNutrition?[0].toString() ??
+                        "")
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   BottomNavigationBar _customBottomNavigateBar() {
@@ -160,77 +313,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _scrollController!.dispose();
     super.dispose();
-  }
-
-  Widget _buildFoodItem(
-      BuildContext context,
-      String? imgPath,
-      String? foodName,
-      String? sharedBy,
-      List<String>? description,
-      List<String>? details,
-      int? index) {
-    return ListTile(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => DetailScreen(
-                  foodName: foodName.toString(),
-                  sharedBy: sharedBy.toString(),
-                  description: description!,
-                  details: details,
-                  image: imgPath.toString(),
-                )));
-      },
-      leading: _buildListTileLeading(imgPath),
-      title: _buildListTileTitle(foodName),
-      subtitle: _buildListTileSubtitle(sharedBy),
-      trailing: _buildListTileTrailing(context),
-    );
-  }
-
-  ClipRRect _buildListTileLeading(String? imgPath) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10.0),
-      child: Image.network(imgPath.toString(),
-          fit: BoxFit.cover, height: 75.0, width: 75.0),
-    );
-  }
-
-  Text _buildListTileTitle(String? foodName) {
-    return Text(
-      foodName.toString(),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold),
-      textWidthBasis: TextWidthBasis.longestLine,
-    );
-  }
-
-  Text _buildListTileSubtitle(String? sharedBy) {
-    return Text(
-      "by " + sharedBy.toString(),
-      style: TextStyle(fontSize: 14.0, color: Colors.grey),
-    );
-  }
-
-  Icon _buildListTileTrailing(BuildContext context) {
-    return Icon(
-      Icons.arrow_right_outlined,
-      size: MediaQuery.of(context).size.height * 0.035,
-    );
-  }
-}
-
-class NullDataView extends StatelessWidget {
-  const NullDataView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text("There is no foods.."),
-    );
   }
 }
 

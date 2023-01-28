@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:login_register/core/const/responsive/responsive.dart';
 
 class DetailScreen extends StatefulWidget {
   DetailScreen({
@@ -9,12 +10,14 @@ class DetailScreen extends StatefulWidget {
     required this.image,
     required this.description,
     required this.details,
+    required this.receipt,
   }) : super(key: key);
   final String foodName;
   final String sharedBy;
   final String image;
-  final List<String>? description;
+  final String description;
   final dynamic details;
+  final List<String>? receipt;
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -109,7 +112,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       children: [
                         Container(
                           color: Colors.white24,
-                          child: DetailContentMenu(widget.description),
+                          child: DetailContentMenu(widget.receipt),
                         ),
                         Container(
                           color: Colors.white24,
@@ -148,37 +151,32 @@ class FoodTitleWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
       ),
       child: Container(
+        width: context.width,
         margin: EdgeInsets.all(5.0),
         padding: EdgeInsets.all(5.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Align(
-              alignment: Alignment.topLeft,
-              child: Wrap(
-                children: <Widget>[
-                  Text(
-                    productName,
-                    style: TextStyle(
-                        fontSize: 18.0,
-                        color: Color(0xFF3a3a3b),
-                        fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+            Wrap(
+              children: <Widget>[
+                Text(
+                  productName,
+                  style: TextStyle(
+                      fontSize: 18.0,
+                      color: Color(0xFF3a3a3b),
+                      fontWeight: FontWeight.w500),
+                ),
+              ],
             ),
             SizedBox(
               height: 5,
             ),
-            Row(
-              children: <Widget>[
-                Text(
-                  productHost,
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFF1f1f1f),
-                      fontWeight: FontWeight.w400),
-                ),
-              ],
+            Text(
+              "by " + productHost,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF1f1f1f),
+                  fontWeight: FontWeight.w400),
             )
           ],
         ),
