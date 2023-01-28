@@ -5,8 +5,9 @@ const cheerio = require('cheerio');
 require('dotenv').config();
 
 /**
- * Get limit param in the future. 
- * @param {int} limit 
+ * These function scrape links from a response
+ * that contains source links of data.
+ * @param {int} limit scrape source links
  * @returns - Array of source links 
  */
 const getSourceLinks =  async () =>{
@@ -26,6 +27,11 @@ const getSourceLinks =  async () =>{
     return arr
 }
 
+/**
+ * These function scrape details from each source links.
+ * @param {Array} source of links 
+ * @returns - Array of json object that contains data.
+ */
 const readDetails = async(sourceLinks = []) => {
     temp_array = []
 
@@ -94,7 +100,7 @@ module.exports = async (req, res) => {
         return res.status(200).send( {'msg': result.insertedCount + " documents were inserted."} )
     }
 
-    return res.status(409).send({'msg' : 'Data is already exist in database!'})
+    return res.status(409).errorJson(errorJson(err, 'Data is already exist in database!'))
 
 };
 

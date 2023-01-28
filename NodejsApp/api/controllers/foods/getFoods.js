@@ -9,8 +9,6 @@ module.exports = async (req,res) => {
     
         req.query.page ? skip = (req.query.page - 1) * PAGE_SIZE : skip = (1 - 1) * PAGE_SIZE;
 
-
-
         let foods = await Food.find().sort( {_id: -1} ).skip( skip ).limit( PAGE_SIZE).catch( (e) => {
             return res.status(500).errorJson(errorJson(e, 'An interval server error occurred while getting foods from db.'))
         });

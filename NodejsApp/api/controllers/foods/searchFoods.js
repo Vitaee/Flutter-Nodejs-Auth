@@ -2,15 +2,27 @@ const { Food } = require('../../models/food');
 
 module.exports = async (req,res) => {
   try {
-      const regex = new RegExp(req.body.title, 'i')
-     
-      const results = await Food.find({"food_title": {$regex: regex} })
+      let data = req.body;
+      let queryArr = []
+
+      let index_count = 0
+
+      for (var key in data){
+        let dynamic_key = Object.keys(data)[index_count]
+        let json_object =   { [dynamic_key] : { '$regex': `${data[key]}`, '$options': 'i' } }  
+        queryArr.push( json_object );
+        index_count += 1
+      }
+
+      const results = await Food.find({ $or: queryArr })
         
       results.length >= 1 ? res.status(200).send(results) : res.status(200).send({"msg":"Not found."})
           
    } catch (err) {
-      console.log(err)
+    console.log(err)
     res.status(401);
     res.send("Unexpected Error");
+  
   }
+
 }
