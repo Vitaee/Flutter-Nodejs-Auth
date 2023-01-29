@@ -2,18 +2,13 @@ import { foodModel } from '../../models/food/index.js';
 
 export default async (req,res) => {
   try {
-      let data = req.body;
-      let queryArr = []
-
-      let index_count = 0
-
-      for (var key in data){
-        let dynamic_key = Object.keys(data)[index_count]
-        let json_object =   { [dynamic_key] : { '$regex': `${data[key]}`, '$options': 'i' } }  
-        queryArr.push( json_object );
-        index_count += 1
-      }
-
+      let queryArr = [
+        { 'foodName' :  { '$regex': `${req.body.search}`, '$options': 'i' } },
+        { 'foodDescription' :  { '$regex': `${req.body.search}`, '$options': 'i' } },
+        {'recipeCategory' : {'$regex' : `${req.body.search}` , '$options' : 'i'} },
+        { 'recipeCuisine' : {'$regex' : `${req.body.search}` , '$options' : 'i'} }
+      ]
+      
       const results = await foodModel.find({ $or: queryArr })
         
       results.length >= 1 ? res.status(200).send(results) : res.status(200).send({"msg":"Not found."})

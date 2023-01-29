@@ -40,12 +40,6 @@ async function uploadFile(file) {
   await s3.send(new PutObjectCommand(uploadParams));
 
   deleteSync(['public/*/']);
-  /*const command = new GetObjectCommand({
-    Bucket: bucketName,
-    Key: file.filename,
-  });
-
-  const url = await getSignedUrl(s3, command);*/
 
   return `https://${bucketName}.s3.${region}.amazonaws.com/${file.filename}`;
 }
