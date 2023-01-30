@@ -4,7 +4,7 @@ import errorJson from "../../../../utils/error.js";
 import generateRandomCode from "../../../../utils/generate-random-code.js";
 import { signAccessToken } from '../../../../utils/jwtHelper.js';
 import { uploadFile } from '../../../../utils/bucketUpload.js';
-
+import async from "async"
 
 let errorObject = {}
 export default async (req,res) => {
@@ -17,9 +17,10 @@ export default async (req,res) => {
       errorObject = {msg:"Please provide a password that longer than 6 letters and shorter than 20 letters.",};
     else if (error.details[0].message.includes("username"))
       errorObject = {msg:"Please provide a name that longer than 3 letters and shorter than 30 letters.",};
-    else
+    else {
+      console.log(error);
       errorObject = {msg: "Please provide all the required fields!"};
-
+    }
     return res
         .status(400)
         .json(errorJson(errorObject.msg,"Error while registering!"));
@@ -41,14 +42,13 @@ export default async (req,res) => {
         }while (unique);
 
     const hash = await bcryptjs.hash(req.body.password, 10);
-    const uploadedImage = await uploadFile(req.file);
-
+    
     let user = new User({
         email:req.body.email.trim(),
         password:hash,
         username: username,
-        profileImage: uploadedImage,
-        bio: req.body.bio,
+        profileImage: "",
+        bio: "",
         lastLogin: Date.now(),
     });
 
@@ -56,6 +56,18 @@ export default async (req,res) => {
         return res
             .status(500).json(errorJson(err.message,"An interval server error while registering you."))
     });
+
+    // queue example might add email function in this block
+    const photoUploadQueue = async.queue( (data, callback) => {
+      
+      uploadFile(data, (err) =>{
+        if (err) console.log(err)
+        callback();
+      });
+    
+    }, 1);
+
+    photoUploadQueue.push({ 'file' : req.file, 'userId' : user._id })
 
     const authorization = await signAccessToken(user._id);
 

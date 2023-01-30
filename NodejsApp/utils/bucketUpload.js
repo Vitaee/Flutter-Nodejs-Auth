@@ -5,6 +5,7 @@ import {  deleteSync } from 'del';
 import * as dotenv from 'dotenv'
 dotenv.config()
 import { existsSync, mkdirSync } from "fs";
+import { User } from "../api/models/user/index.js"
 
 
 const bucketName = process.env.AWS_BUCKET_NAME;
@@ -22,26 +23,27 @@ const s3 = new S3Client({
 });
 
 // UPLOAD FILE TO S3
-async function uploadFile(file) {
+async function uploadFile(data) {
   
   let dir = "./public/images";
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
   }
   
-  const fileStream = createReadStream(file.path);
+  const fileStream = createReadStream(data.file.path);
 
   const uploadParams = {
     Bucket: bucketName,
     Body: fileStream,
-    Key: file.filename,
+    Key: data.file.filename,
   };
 
   await s3.send(new PutObjectCommand(uploadParams));
+  let profileImageUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${data.file.filename}`;
 
   deleteSync(['public/*/']);
-
-  return `https://${bucketName}.s3.${region}.amazonaws.com/${file.filename}`;
+  await User.findByIdAndUpdate( data.userId, {profileImage: profileImageUrl })
+  return {'msg' : 'Successfully updated profileImage!'} 
 }
 
 
