@@ -41,7 +41,7 @@ async function uploadFile(data) {
   await s3.send(new PutObjectCommand(uploadParams));
   let profileImageUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${data.file.filename}`;
 
-  deleteSync(['public/*/']);
+  deleteSync(['public/images/*/']);
   await User.findByIdAndUpdate( data.userId, {profileImage: profileImageUrl })
   return {'msg' : 'Successfully updated profileImage!'} 
 }

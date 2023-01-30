@@ -56,8 +56,7 @@ app.use((error,req,res,next) =>{
 			resultMessage:{msg:error.messagge}
 		})
 	}else {
-		res.json(errorJson(error.message, 'External Error'));
-
+		console.log("Unexpected Error")
 	}
 });
 

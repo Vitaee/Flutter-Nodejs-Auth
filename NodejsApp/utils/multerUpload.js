@@ -15,6 +15,14 @@ const fileStorageEngine = diskStorage({
   },
 });
 
-const upload = multer({ storage: fileStorageEngine });
+const upload = multer({ storage: fileStorageEngine, limits: { fileSize: 1000000 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+        cb(null, true);
+    } else {
+        return cb(new Error('Invalid mime type'));
+    }
+  }  
+});
 
 export{ upload }

@@ -26,7 +26,6 @@ export default async (req,res) => {
         .json(errorJson(errorObject.msg,"Error while registering!"));
     }
 
-
     let username,unique,tempName;
     let name = req.body.username;
     name.includes(" ") ? tempName = name.trim().split(" ").slice(0,1).join("").toLowerCase().trim() : tempName = name.toLowerCase().trim();
