@@ -4,6 +4,7 @@ import { db } from './api/middleware/db.js';
 import errorJson from './utils/error.js';
 import rateLimiter from './api/middleware/rateLimiter.js';
 import Routes from './api/routes/index.js';
+import path from 'path';
 import * as dotenv from 'dotenv'
 dotenv.config()
 
@@ -27,11 +28,12 @@ app.use(express.urlencoded({ extended: false }));
 app.set('trust proxy', true);
 db();
 
-
 app.get('/', (req, res) => {
 	res.status(200).json({resultMessage: 'Our App is successfully working...'});
 });
 app.use('/', Routes);
+
+
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Headers',
@@ -59,5 +61,11 @@ app.use((error,req,res,next) =>{
 		console.log("Unexpected Error")
 	}
 });
+
+app.get('/resetPassword/:token/', (req,res) => {
+	const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
+	res.sendFile(path.join(__dirname+'/resetPass.html'));
+})
 
 app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
