@@ -31,6 +31,25 @@ db();
 app.get('/', (req, res) => {
 	res.status(200).json({resultMessage: 'Our App is successfully working...'});
 });
+
+
+app.use((error,req,res,next) =>{
+	res.status(error.status || 500);
+	if (res.status === 500){
+		res.json({
+			resultMessage:{msg: error.messagge}
+		})
+	}else if(error.status === 404){
+		res.json({
+			resultMessage:{msg:error.messagge}
+		})
+	}else {
+		console.log("Unexpected Error")
+		
+	}
+});
+
+
 app.use('/', Routes);
 
 
@@ -47,20 +66,7 @@ app.use((req, res, next) => {
 
 });
 
-app.use((error,req,res,next) =>{
-	res.status(error.status || 500);
-	if (res.status === 500){
-		res.json({
-			resultMessage:{msg: error.messagge}
-		})
-	}else if(error.status === 404){
-		res.json({
-			resultMessage:{msg:error.messagge}
-		})
-	}else {
-		console.log("Unexpected Error")
-	}
-});
+
 
 app.get('/resetPassword/:token/', (req,res) => {
 	const __dirname = path.dirname(new URL(import.meta.url).pathname);

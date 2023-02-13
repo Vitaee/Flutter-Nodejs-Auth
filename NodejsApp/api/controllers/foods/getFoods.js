@@ -11,12 +11,12 @@ export default async (req,res) => {
         req.query.page ? skip = (req.query.page - 1) * PAGE_SIZE : skip = (1 - 1) * PAGE_SIZE;
 
         let foods = await foodModel.find().sort( {_id: -1} ).skip( skip ).limit( PAGE_SIZE).catch( (e) => {
-            return res.status(500).errorJson(errorJson(e, 'An interval server error occurred while getting foods from db.'))
+            return res.status(500).send(errorJson(e, 'An interval server error occurred while getting foods from db.'))
         });
 
         foods.length >= 1 ? res.status(200).send( foods  ) : res.status(404).send([])
 
   } catch (err) {
-    return res.status(500).errorJson(errorJson(err, 'An interval server error occurred'))
+    return res.status(500).send(errorJson(err, 'An interval server error occurred'))
   }
 }
