@@ -46,7 +46,7 @@ const foodSchema =  mongoose.Schema({
     
 }, {timestamps:true});
 
-const Food = mongoose.model('Food', foodSchema);
+const Food = mongoose.model('healthyFoods', foodSchema);
 
 export const foodModel = Food
 export const schemaFood = foodSchema 

@@ -27,9 +27,10 @@ class _SideMenuState extends State<SideMenu> {
   Future<List<UserData>> fetchUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic token = prefs.getString("jwt");
+    print(token);
 
-    final response = await http.get(Uri.parse('$SERVER_IP/user/data'),
-        headers: {'authorization': token});
+    final response = await http.get(Uri.parse('$SERVER_IP/user/'),
+        headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode != 200) {
       List jsonResponse = json.decode(response.body);
@@ -128,6 +129,7 @@ class _SideMenuState extends State<SideMenu> {
 }
 
 enum ListTileTexts { Homepage, Search, Profile, Logout }
+
 enum ImagePath { profile }
 
 extension ImageExtension on ImagePath {

@@ -16,30 +16,18 @@ class ScrapFood:
         req = requests.get(self.baseurl, headers=self.user_agent,timeout=5)
         soup = BeautifulSoup(req.content, 'html.parser')
         
-        total_data_count = len(soup.find('div', class_='slide-container').find_all('div', class_='slideshow-slide'))
-        loaded_source = soup.find_all('div', class_='slideshow-slide-dek')
-
-        if len(loaded_source) != total_data_count:
-            req = requests.get(self.baseurl.replace(self.baseurl[-1], str(total_data_count - 4)), headers=self.user_agent, timeout=5 )
-            soup = BeautifulSoup(req.content, 'html.parser')
-            start_from = len(loaded_source) + 1
-            remaining_source = soup.find_all('div', class_='slideshow-slide-dek')[start_from:]
-            
-            loaded_source = loaded_source + remaining_source    
-        
-        for item in loaded_source:
+        json_data = json.loads(soup.find('script', id='__NEXT_DATA__').text)
+        for item in json_data["props"]["pageProps"]["slides"]:
             try:
-                source_link = item.find_all('a')[-1]['href']
-                if source_link[5:13] == '://patty' or source_link[5:13] == '://spicy':
-                    pass
-                else:
-                    if 'delish.com' not in source_link:
-                        if 'https://' not in source_link: 
-                            source_link = "https://www.delish.com" + source_link
-                    source_links.append(source_link)
+                source_links.append(item["metadata"]["dekDom"]["children"][-1]["children"][-1]["children"][0]["attribs"]["href"])
             except:
-                pass
-        
+                try:
+                    source_links.append(item["metadata"]["dekDom"]["children"][-1]["children"][1]["children"][1]["attribs"]["href"])
+                except:
+                    try:
+                        source_links.append(item["metadata"]["dekDom"]["children"][-1]["children"][1]["children"][0]["attribs"]["href"])
+                    except:
+                        pass
         self.analyse(source_links)
 
     def analyse(self, hrefs: list) -> None:
@@ -59,7 +47,7 @@ class ScrapFood:
                 
                 if parsed_json:
                     temp_data_list.append(parsed_json) 
-                    #self.save_to_db(parsed_json)
+                    self.save_to_db(parsed_json)
             else:
                 if soup.text in 'Service is currently unavailable. We apologize for the inconvenience. Please try again later.':
                     pass
@@ -129,13 +117,14 @@ class ScrapFood:
                         'directions': self.directions,
                         'image': food_photo
                     }
+                    
 
                     temp_data_list.append(to_js)
-                    #self.save_to_db(to_js)
+                    self.save_to_db(to_js)
             time.sleep(6)
             
             
-        self.save_to_file(temp_data_list)
+        #self.save_to_file(temp_data_list)
 
     def parse_json_data(self, data) -> dict:
         to_dict = {}
@@ -217,10 +206,10 @@ class ScrapFood:
         return to_dict
 
     def save_to_db(self, to_js):
-        # 172.17.0.4
-        client = pymongo.MongoClient("mongodb://localhost:27017")
-        db = client['node-flutter']
-        our_collection = db.healthyFoods
+        # 172.17.0.3
+        client = pymongo.MongoClient("mongodb://172.17.0.3:27017")
+        db = client['healthyfood_development']
+        our_collection = db.healthyfoods
 
         result = our_collection.insert_one(to_js)
         print(f"Data inserted : {result.inserted_id}")
@@ -236,5 +225,5 @@ class ScrapFood:
         if self.ingredients or self.directions:
             self.ingredients.clear()
             self.directions.clear()
-        
+        self.save_to_db()
         exit()

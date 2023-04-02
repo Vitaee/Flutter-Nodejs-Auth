@@ -1,7 +1,7 @@
 import { foodModel } from '../../models/food/index.js';
 import errorJson from '../../../utils/error.js';
 import axios from 'axios';
-import load from 'cheerio';
+import * as cheerio from 'cheerio';
 import * as dotenv from 'dotenv'
 dotenv.config()
 
@@ -39,7 +39,7 @@ const readDetails = async(sourceLinks = []) => {
     for (let index = 0; index < sourceLinks.length; index++) {
         let json_object = {}
         let response = await axios.get(sourceLinks[index])
-        let $ = await load(response.data);
+        let $ = await cheerio.load(response.data);
 
         let data = JSON.parse( $('#__NEXT_DATA__')[0].children[0].data )
 

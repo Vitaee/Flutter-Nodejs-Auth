@@ -261,8 +261,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconEnums.ic_kcal.toImage,
-                    Text(snapshot.data?[index].recipeNutrition?[0].toString() ??
-                        "")
+                    Text(snapshot.data?[index].recipeCategory![0].toString() ??
+                        "asd")
                   ],
                 )
               ],
